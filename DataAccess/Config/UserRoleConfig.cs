@@ -10,7 +10,6 @@ namespace DataAccess.Config
         {
             builder.HasKey(x => new { x.UsersId, x.RoleId });
             builder.ToTable("tblUserRole");
-
         }
     }
 }
