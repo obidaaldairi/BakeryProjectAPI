@@ -16,6 +16,7 @@ namespace Domin.Entity
         public string Password { get; set; } = string.Empty;
         public bool EmailConfirmed { get; set; }
         public bool PhoneNumberConfirmed { get; set; }
+        // Photo
         public string Avatar { get; set; } = string.Empty;
         [NotMapped]
         public ICollection<Role> Roles { get; set; } = new List<Role>();

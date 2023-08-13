@@ -9,7 +9,7 @@ namespace Domin.Repository
 {
     public interface IUserRepository : IGenericRepository<User>
     {
-        //public List<UserDTO> Search(string filter = "");
+        public List<User> Search(string filter = "");
 
     }
 }

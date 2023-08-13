@@ -2,11 +2,9 @@
 {
     public interface IUnitOfWork : IDisposable 
     {
-        IUserRepository UserRepository { get; }
-        IRoleRepository RoleRepository { get; }
-        ITokenGenerator TokenGeneratorRepository { get; }
-
-        void Save();
+        IUserRepository User { get; }
+        IRoleRepository Role { get; }
+        void Commit();
     }
 
 }
