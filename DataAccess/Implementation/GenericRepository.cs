@@ -14,38 +14,41 @@ namespace DataAccess.Implementation
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
         private readonly AppDbContext context;
+
         private DbSet<T> entities;
+
         public GenericRepository()
         {
             
         }
+
         public GenericRepository(AppDbContext context)
         {
             this.context = context;
             context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             entities = context.Set<T>();
         }
+
         public void Delete(T entity)
         {
             entity.IsDeleted = true;
             entities.Update(entity);
             context.SaveChanges();
         }
+
         public List<T> FindAllByCondition(Expression<Func<T, bool>> predicate)
         {
-            return context.Set<T>().Where(predicate).ToList();
+            return context.Set<T>().AsNoTracking().Where(predicate).ToList();
         }
 
         public IQueryable<T> FindAllByConditionWithIncludes(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)//بدون شرط فقط join
         {
-            var query = entities.Where(predicate);
+            var query = entities.AsNoTracking().Where(predicate);
             return includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
         }
 
-
         public Tuple<List<T>, int> FindAllByConditionWithIncludesAndPagination(int skip, int take, Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)// تعتبر ميثود تنظيمية بحيث اذا كان الجدول يحتوي على الآف الأسطر .... بهذه الميثود يقوم بإظهار البيانات كمثال يظهر عشر اسطر عشر اسطر او يتم تقسيم الصفحات ويتم عرض البيانات  مقسمة في تلك الصفحات
         {
-
             try
             {
                 var records = entities.Where(predicate);
@@ -58,9 +61,7 @@ namespace DataAccess.Implementation
                 return Tuple.Create(new List<T>(), 0);
             }
 
-
         }
-
 
         public IQueryable<T> FindAllWithIncludes(params Expression<Func<T, object>>[] includes)
         {
@@ -70,12 +71,12 @@ namespace DataAccess.Implementation
 
         public T FindByCondition(Expression<Func<T, bool>> predicate)
         {
-            return context.Set<T>().SingleOrDefault(predicate);
+            return context.Set<T>().AsNoTracking().SingleOrDefault(predicate);
         }
 
         public T FindByConditionWithIncludes(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
         {
-            var query = entities.Where(predicate);
+            var query = entities.AsNoTracking().Where(predicate);
             var result = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
 
             if (!result.Any())
@@ -86,7 +87,7 @@ namespace DataAccess.Implementation
 
         public List<T> GetAll()
         {
-            return entities.Where(x => x.IsDeleted == false).ToList();
+            return entities.AsNoTracking().Where(x => x.IsDeleted == false).ToList();
         }
 
         public T Insert(T entity)
