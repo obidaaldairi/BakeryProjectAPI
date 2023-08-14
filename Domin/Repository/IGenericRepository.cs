@@ -11,6 +11,8 @@ namespace Domin.Repository
     public interface IGenericRepository<T> where T : BaseEntity
     {
         T FindByCondition(Expression<Func<T, bool>> predicate);
+        bool FindIsExistByCondition(Expression<Func<T, bool>> predicate);
+
         T FindByConditionWithIncludes(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
         public List<T> FindAllByCondition(Expression<Func<T, bool>> predicate);
         public IQueryable<T> FindAllWithIncludes(params Expression<Func<T, object>>[] includes);

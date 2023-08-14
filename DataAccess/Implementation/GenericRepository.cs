@@ -85,6 +85,11 @@ namespace DataAccess.Implementation
             return result.First();
         }
 
+        public bool FindIsExistByCondition(Expression<Func<T, bool>> predicate)
+        {
+            return entities.AsNoTracking().Any(predicate);
+        }
+
         public List<T> GetAll()
         {
             return entities.AsNoTracking().Where(x => x.IsDeleted == false).ToList();

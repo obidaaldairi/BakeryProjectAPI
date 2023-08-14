@@ -22,7 +22,6 @@ namespace DataAccess.Implementation
         public IUserRepository User  { get; private set; }
 
         public IRoleRepository Role { get; private set; }
-
         public void Commit()
         {
             _context.SaveChanges();

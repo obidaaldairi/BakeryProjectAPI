@@ -18,6 +18,12 @@ namespace Domin.Entity
         public bool PhoneNumberConfirmed { get; set; }
         // Photo
         public string Avatar { get; set; } = string.Empty;
+        public DateTime CreatedAT { get; set; }
+        public string Bio { get; set; }
+        public DateTime BirthDate { get; set; }
+        public DateTime LastLoginDate { get; set; }
+        public bool IsActive { get; set; }
+        public string Role { get; set; }
         [NotMapped]
         public ICollection<Role> Roles { get; set; } = new List<Role>();
         [NotMapped]
