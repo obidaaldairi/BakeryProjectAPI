@@ -33,7 +33,7 @@ namespace DataAccess.Implementation
         {
             entity.IsDeleted = true;
             entities.Update(entity);
-            context.SaveChanges();
+            //context.SaveChanges();
         }
 
         public List<T> FindAllByCondition(Expression<Func<T, bool>> predicate)
@@ -98,7 +98,7 @@ namespace DataAccess.Implementation
         public T Insert(T entity)
         {
             entities.Add(entity);
-            context.SaveChanges();
+            //context.SaveChanges();
 
             return entity;
         }
@@ -107,7 +107,7 @@ namespace DataAccess.Implementation
         {
 
             entities.Update(entity);
-            context.SaveChanges();
+            //context.SaveChanges();
         }
     }
 }
