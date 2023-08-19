@@ -100,7 +100,6 @@ namespace BakeryProjectAPI.Controllers
                 _unitOfWork.User.Update(user);
                 _unitOfWork.Commit();
 
-
                 // Generate token
                 var token = _tokenGenerator.CreateToken(user);
 
@@ -135,20 +134,6 @@ namespace BakeryProjectAPI.Controllers
 
             return Ok("Logged out successfully");
         }
-
-
-
-
-
-
-
-        [HttpPost("Test")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public ActionResult Test()
-        {
-            return Ok(new {message="This is a Test Action" });
-        }
-
 
     }
 }
