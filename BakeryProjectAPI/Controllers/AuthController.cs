@@ -135,5 +135,14 @@ namespace BakeryProjectAPI.Controllers
             return Ok("Logged out successfully");
         }
 
+
+        [HttpPost("Test")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public IActionResult Test()
+        {
+
+            return Ok("Logged out successfully");
+        }
+
     }
 }
