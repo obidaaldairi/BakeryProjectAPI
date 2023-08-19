@@ -6,7 +6,7 @@ namespace DataAccess.Implementation
 {
     public class RoleRepository : GenericRepository<Role>, IRoleRepository
     {
-        //public RoleRepository(AppDbContext context) : base(context) { }
+        public RoleRepository(AppDbContext context) : base(context) { }
     }
 
 }

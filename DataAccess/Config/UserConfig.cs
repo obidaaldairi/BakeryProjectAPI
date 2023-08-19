@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Config
 {
-    public class UserConfig :IEntityTypeConfiguration<User>
-    {
-        public void Configure(EntityTypeBuilder<User> builder)
-        {
-            builder.HasKey(x => x.ID);
-            builder.Property(x => x.ID).ValueGeneratedOnAdd();
-            builder.ToTable("tblUsers");
-        }
-    }
+    //public class UserConfig :IEntityTypeConfiguration<User>
+    //{
+    //    public void Configure(EntityTypeBuilder<User> builder)
+    //    {
+    //        builder.HasKey(x => x.ID);
+    //        builder.Property(x => x.ID).ValueGeneratedOnAdd();
+    //        builder.ToTable("tblUsers");
+    //    }
+    //}
 }

@@ -11,27 +11,30 @@ namespace DataAccess.Context
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
-        public DbSet<UserRole> UserRoles { get; set; }
+        public AppDbContext(DbContextOptions<AppDbContext>options):base(options) { }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
-            var connectionString = configuration.GetSection("Defult").Value;
+        public DbSet<User> tblUsers { get; set; }
+        public DbSet<Role> tblRoles { get; set; }
+        public DbSet<UserRole> tblUserRoles { get; set; }
 
-            optionsBuilder.UseSqlServer(connectionString);
-        }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
 
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        //    base.OnConfiguring(optionsBuilder);
+        //    var configuration = new ConfigurationBuilder()
+        //        .AddJsonFile("appsettings.json")
+        //        .Build();
+        //    var connectionString = configuration.GetSection("Defult").Value;
 
-        }
+        //    optionsBuilder.UseSqlServer(connectionString);
+        //}
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    base.OnModelCreating(modelBuilder);
+
+        //    modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+
+        //}
 
     }
 }

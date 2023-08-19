@@ -10,8 +10,6 @@ namespace Domin.Repository
     public interface IUserRepository : IGenericRepository<User>
     {
         public List<User> Search(string filter = "");
-        public bool IsUserExist(string email);
-
-
+        public int Count();
     }
 }

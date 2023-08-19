@@ -42,47 +42,47 @@ namespace DataAccess.Implementation
             }
         }
 
-        public  string Register(User request)
+        public string Register(User request)
         {
-            try
-            {
-                var user = _unitOfWork.User
-                .IsUserExist(request.Email);
-                if (user)
-                {
-                    return "This Email Is Already Exist";
-                }
-                else
-                {
-                    _unitOfWork.User.Insert(new User
-                    {
-                        UserName = request.Email,
-                        Email = request.Email,
-                        Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                        Avatar = request.Avatar,
-                        EmailConfirmed = false,
-                        IsActive = false,
-                        IsDeleted = false,
-                        PhoneNumber = request.PhoneNumber,
-                        PhoneNumberConfirmed = false,
-                        ID = Guid.NewGuid(),
-                        CreatedAT = DateTime.Now,
-                        Bio = request.Bio,
-                        BirthDate = request.BirthDate,
-                        LastLoginDate = new DateTime(),
-                        Role = request.Role
-                    });
-                    _unitOfWork.Commit();
-                    return "User Added Successfully";
+            //try
+            //{
+            //    var user = _unitOfWork.User
+            //    .FindIsExistByCondition(request.Email);
+            //    if (user)
+            //    {
+            //        return "This Email Is Already Exist";
+            //    }
+            //    else
+            //    {
+            //        _unitOfWork.User.Insert(new User
+            //        {
+            //            UserName = request.Email,
+            //            Email = request.Email,
+            //            Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            //            Avatar = request.Avatar,
+            //            EmailConfirmed = false,
+            //            IsActive = false,
+            //            IsDeleted = false,
+            //            PhoneNumber = request.PhoneNumber,
+            //            PhoneNumberConfirmed = false,
+            //            ID = Guid.NewGuid(),
+            //            CreatedAT = DateTime.Now,
+            //            Bio = request.Bio,
+            //            BirthDate = request.BirthDate,
+            //            LastLoginDate = new DateTime(),
+            //            Role = request.Role
+            //        });
+            //        _unitOfWork.Commit();
+            //        return "User Added Successfully";
 
-                }
-            }
-            catch (Exception ex)
-            {
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
 
-                return ex.Message;
-            }
-            
+            //    return ex.Message;
+            //}
+            return "";
         }
     }
 }

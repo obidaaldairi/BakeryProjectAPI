@@ -7,16 +7,11 @@ namespace DataAccess.Implementation
     {
         private readonly AppDbContext _context;
 
-        public UnitOfWork()
-        {
-
-        }
-
         public UnitOfWork(AppDbContext context)
         {
             this._context = context;
-            User = new UserRepository();
-            Role = new RoleRepository();
+            User = new UserRepository(_context);
+            Role = new RoleRepository(_context);
         }
 
         public IUserRepository User  { get; private set; }

@@ -13,20 +13,15 @@ namespace DataAccess.Implementation
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
-        private readonly AppDbContext context;
+        private readonly AppDbContext _context;
 
         private DbSet<T> entities;
 
-        public GenericRepository()
-        {
-            
-        }
-
         public GenericRepository(AppDbContext context)
         {
-            this.context = context;
+            this._context = context;
             context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            entities = context.Set<T>();
+            entities = _context.Set<T>();
         }
 
         public void Delete(T entity)
@@ -38,7 +33,7 @@ namespace DataAccess.Implementation
 
         public List<T> FindAllByCondition(Expression<Func<T, bool>> predicate)
         {
-            return context.Set<T>().AsNoTracking().Where(predicate).ToList();
+            return _context.Set<T>().AsNoTracking().Where(predicate).ToList();
         }
 
         public IQueryable<T> FindAllByConditionWithIncludes(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)//بدون شرط فقط join
@@ -71,7 +66,7 @@ namespace DataAccess.Implementation
 
         public T FindByCondition(Expression<Func<T, bool>> predicate)
         {
-            return context.Set<T>().AsNoTracking().SingleOrDefault(predicate);
+            return _context.Set<T>().AsNoTracking().SingleOrDefault(predicate);
         }
 
         public T FindByConditionWithIncludes(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)

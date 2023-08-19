@@ -11,13 +11,12 @@ namespace DataAccess.Implementation
 {
     public class UserRepository : GenericRepository<User>, IUserRepository
     {
-        //public UserRepository(AppDbContext context) : base(context) { }
+        public UserRepository(AppDbContext context) : base(context) { }
 
-        public bool IsUserExist(string email)
+        public int Count()
         {
-           return  this.FindIsExistByCondition(q => q.Email == email);            
+            return this.FindAllByCondition(q=>q.IsDeleted==false).Count();
         }
-
 
         public List<User> Search(string filter = "")
         {

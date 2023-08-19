@@ -1,3 +1,4 @@
+using DataAccess.Context;
 using DataAccess.Implementation;
 using DataAccess.Validation;
 using Domin.Entity;
@@ -5,6 +6,7 @@ using Domin.Repository;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Reflection;
@@ -19,8 +21,13 @@ builder.Services.AddControllers();
 // For Fluent Validation 
 builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<RoleValidator>();
-builder.Services.AddScoped<IValidator<User>, UserValidator>();
-builder.Services.AddScoped<IValidator<Role>, RoleValidator>();
+builder.Services.AddScoped(typeof(IValidator<User>), typeof(UserValidator));
+builder.Services.AddScoped(typeof(IValidator<Role>), typeof(RoleValidator));
+
+builder.Services.AddDbContext<AppDbContext>(opt =>
+{
+    opt.UseSqlServer(configuration.GetSection("Defult").Value, b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName));
+});
 
 // Jwt Bearer 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
