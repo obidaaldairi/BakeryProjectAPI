@@ -23,6 +23,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<RoleValidator>();
 builder.Services.AddScoped(typeof(IValidator<User>), typeof(UserValidator));
 builder.Services.AddScoped(typeof(IValidator<Role>), typeof(RoleValidator));
+builder.Services.AddScoped(typeof(IEmailSender), typeof(EmailSender)) ;
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {

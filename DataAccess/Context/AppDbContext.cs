@@ -16,6 +16,7 @@ namespace DataAccess.Context
         public DbSet<User> tblUsers { get; set; }
         public DbSet<Role> tblRoles { get; set; }
         public DbSet<UserRole> tblUserRoles { get; set; }
+        public DbSet<WebConfiguration> tblWebConfigurations { get; set; }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{

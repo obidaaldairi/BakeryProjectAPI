@@ -97,7 +97,6 @@ namespace BakeryProjectAPI.Controllers
                 // udpate user logged in date 
                 user.IsActive = true;
                 user.LastLoginDate = DateTime.Now;
-                _unitOfWork.User.Update(user);
                 _unitOfWork.Commit();
 
                 // Generate token
@@ -126,6 +125,10 @@ namespace BakeryProjectAPI.Controllers
         [HttpPost("Logout")]
         public IActionResult Logout()
         {
+            //var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+            //var user = _unitOfWork.User.FindByCondition(q => q.ID.ToString() ==userId);
+            //user.IsActive=false;
+            //_unitOfWork.Commit();
             // Remove the authentication token cookie
             Response.Cookies.Delete("AuthToken");
 

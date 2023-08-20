@@ -1,4 +1,9 @@
 ﻿namespace BakeryProjectAPI.DTOs
 {
-    public record LoginDTO(string Password, string Email);
+    public class LoginDTO
+    {
+        public string Password { get; set; }
+        public string Email { get; set; }
+    }
+    
 }
