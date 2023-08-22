@@ -3,14 +3,19 @@ using DataAccess.Implementation;
 using DataAccess.Validation;
 using Domin.Entity;
 using Domin.Repository;
+using FluentEmail.Core.Interfaces;
+using FluentEmail.Core;
+using FluentEmail.Smtp;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Net.Mail;
 using System.Reflection;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -24,7 +29,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<RoleValidator>();
 builder.Services.AddScoped(typeof(IValidator<User>), typeof(UserValidator));
 builder.Services.AddScoped(typeof(IValidator<Role>), typeof(RoleValidator));
 builder.Services.AddScoped(typeof(IEmailSender), typeof(EmailSender)) ;
-
+//builder.Services.AddSingleton(typeof(IWebConfigurationRepository), typeof(WebConfigurationRepository));
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlServer(configuration.GetSection("Defult").Value, b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName));

@@ -21,7 +21,7 @@ namespace DataAccess.Implementation
             var claims = new List<Claim>
             {
                  new Claim("Id",user.ID.ToString()),
-                 new Claim(JwtRegisteredClaimNames.Email,user.Email)
+                 new Claim(JwtRegisteredClaimNames.Email,user.Email),
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8
                 .GetBytes(_config.GetSection("secret_Key").Value));

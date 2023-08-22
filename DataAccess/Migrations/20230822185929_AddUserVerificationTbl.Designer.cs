@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230820194030_addWebConfig")]
-    partial class addWebConfig
+    [Migration("20230822185929_AddUserVerificationTbl")]
+    partial class AddUserVerificationTbl
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -121,6 +121,37 @@ namespace DataAccess.Migrations
                     b.ToTable("tblUserRoles");
                 });
 
+            modelBuilder.Entity("Domin.Entity.UserVerification", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVerify")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("UserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("VerificationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("tblUserVerification");
+                });
+
             modelBuilder.Entity("Domin.Entity.WebConfiguration", b =>
                 {
                     b.Property<Guid>("ID")
@@ -157,6 +188,17 @@ namespace DataAccess.Migrations
                         .HasForeignKey("UserID");
 
                     b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domin.Entity.UserVerification", b =>
+                {
+                    b.HasOne("Domin.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

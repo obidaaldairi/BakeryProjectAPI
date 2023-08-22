@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230819110832_init")]
-    partial class init
+    [Migration("20230820202625_addWebConfiguration")]
+    partial class addWebConfiguration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -119,6 +119,29 @@ namespace DataAccess.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("tblUserRoles");
+                });
+
+            modelBuilder.Entity("Domin.Entity.WebConfiguration", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConfigKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConfigValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("tblWebConfigurations");
                 });
 
             modelBuilder.Entity("Domin.Entity.UserRole", b =>

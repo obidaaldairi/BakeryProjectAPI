@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using static System.Net.Mime.MediaTypeNames;
 using System.Reflection.PortableExecutable;
 using System;
+using System.Runtime.Intrinsics.X86;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BakeryProjectAPI.Controllers
 {
@@ -15,13 +18,16 @@ namespace BakeryProjectAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        //private readonly IHttpContextAccessor _contextAccessor;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenGenerator _tokenGenerator;
-        public AuthController(IUnitOfWork unitOfWork, ITokenGenerator tokenGenerator)
+        private readonly IEmailSender _emailSender;
+        
+
+        public AuthController(IUnitOfWork unitOfWork, ITokenGenerator tokenGenerator , IEmailSender emailSender)
         {
             _unitOfWork = unitOfWork;
             _tokenGenerator = tokenGenerator;
+            _emailSender = emailSender;
         }
 
 
@@ -56,6 +62,19 @@ namespace BakeryProjectAPI.Controllers
                     }
                     _unitOfWork.User.Insert(user);
                     _unitOfWork.Commit();
+                    var VCode = Math.Abs(Guid.NewGuid().GetHashCode()).ToString().Substring(0, 5);
+                    _unitOfWork.UserVerification.Insert(new UserVerification
+                    {
+                        UserID = user.ID,
+                        CreationDate = DateTime.Now,
+                        ExpireDate = DateTime.Now.AddDays(1),
+                        IsDeleted = false,
+                        IsVerify  = false,
+                        VerificationCode = VCode
+                    });
+                    _unitOfWork.Commit();
+                    string body = $"Thank you for registering on our website. Here is your verification code: {VCode}. Please enter it to confirm your email.";
+                    _emailSender.SendEmailAsync(registerDTO.Email , "Verification Code" , body);
                     return Ok();
                 }
                 else
@@ -81,7 +100,7 @@ namespace BakeryProjectAPI.Controllers
                 {
                     return BadRequest("Please enter your email.");
                 }
-                else if (string.IsNullOrEmpty(loginDTO.Email))
+                else if (string.IsNullOrEmpty(loginDTO.Password))
                 {
                     return BadRequest("Please enter your password.");
                 }
@@ -97,6 +116,7 @@ namespace BakeryProjectAPI.Controllers
                 // udpate user logged in date 
                 user.IsActive = true;
                 user.LastLoginDate = DateTime.Now;
+                _unitOfWork.User.Update(user);
                 _unitOfWork.Commit();
 
                 // Generate token
@@ -123,12 +143,14 @@ namespace BakeryProjectAPI.Controllers
         }
 
         [HttpPost("Logout")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Logout()
         {
-            //var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
-            //var user = _unitOfWork.User.FindByCondition(q => q.ID.ToString() ==userId);
-            //user.IsActive=false;
-            //_unitOfWork.Commit();
+            string UserIDClaim = User.FindFirst("Id").Value;
+            var user = _unitOfWork.User.FindByCondition(x => x.ID.ToString() == UserIDClaim);
+            user.IsActive = false;
+            _unitOfWork.User.Update(user);
+            _unitOfWork.Commit();
             // Remove the authentication token cookie
             Response.Cookies.Delete("AuthToken");
 
@@ -139,12 +161,33 @@ namespace BakeryProjectAPI.Controllers
         }
 
 
-        [HttpPost("Test")]
+        [HttpPost("VerfiyEmail")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult Test()
+        public ActionResult VerfiyEmail(VerfiyDTO verfiyDTO)
         {
-
-            return Ok("Logged out successfully");
+            string UserIDClaim = User.FindFirst("Id").Value;
+            var user = _unitOfWork.User.FindByCondition(x => x.ID.ToString() == UserIDClaim);
+            var userVerifiy = _unitOfWork.UserVerification
+                .FindByCondition(x => x.UserID.ToString() == UserIDClaim 
+                && x.VerificationCode == verfiyDTO.VerificationCode 
+                && x.IsDeleted == false
+                && x.IsVerify == false
+                && x.ExpireDate >= DateTime.Now
+                && x.CreationDate <= DateTime.Now);
+            if (userVerifiy is null)
+            {
+                return BadRequest("Your verification code is not matching.");
+            }
+            //Update  user
+            user.EmailConfirmed = true;
+            _unitOfWork.User.Update(user);
+            _unitOfWork.Commit();
+            //Update  userVerification
+            userVerifiy.IsVerify = true;
+            userVerifiy.IsDeleted = true;
+            _unitOfWork.UserVerification.Update(userVerifiy);
+            _unitOfWork.Commit();
+            return Ok("Email Confirmed successfully");
         }
 
     }
