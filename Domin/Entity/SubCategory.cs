@@ -6,8 +6,10 @@ namespace Domin.Entity
     public class SubCategory : BaseEntity
     {
         [Required]
-        public string  Title { get; set; }
+        public string  ArabicTitle { get; set; }
 
+        [Required]
+        public string EnglishTitle { get; set; }
         [ForeignKey("CategoryID")]
         public Guid CategoryID { get; set; }
         public Category Category { get; set; }

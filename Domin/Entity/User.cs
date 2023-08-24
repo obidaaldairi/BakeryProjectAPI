@@ -10,7 +10,8 @@ namespace Domin.Entity
 {
     public class User : BaseEntity
     {
-        public string UserName { get; set; } = string.Empty;
+        public string EnglishUserName { get; set; } = string.Empty;
+        public string ArabicUserName { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
@@ -18,12 +19,14 @@ namespace Domin.Entity
         public bool PhoneNumberConfirmed { get; set; }
         // Photo
         public string Avatar { get; set; } = string.Empty;
-        public DateTime CreatedAT { get; set; }
-        public string Bio { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string ArabicBio { get; set; }
+        public string EnglishBio { get; set; }
         public DateTime BirthDate { get; set; }
         public DateTime LastLoginDate { get; set; }
         public bool IsActive { get; set; }
-        public string Role { get; set; }
+        public string ArabicRole { get; set; }
+        public string EnglishRole { get; set; }
         [NotMapped]
         public ICollection<Role> Roles { get; set; } = new List<Role>();
         [NotMapped]

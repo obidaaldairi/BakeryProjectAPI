@@ -13,7 +13,7 @@ namespace BakeryProjectAPI.Controllers
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class WebConfigController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -31,18 +31,18 @@ namespace BakeryProjectAPI.Controllers
         [HttpPost("AddWebConfigValue")]
         public ActionResult Post(WebConfigDTO webConfigDTO)
         {
-            
-            var checkExistkey = _unitOfWork.WebConfiguration.FindIsExistByCondition(q => q.ConfigKey == webConfigDTO.ConfigKey && q.IsDeleted==false);
+
+            var checkExistkey = _unitOfWork.WebConfiguration.FindIsExistByCondition(q => q.ConfigKey == webConfigDTO.ConfigKey && q.IsDeleted == false);
             if (checkExistkey) { return BadRequest("The key is already exist."); }
             _unitOfWork.WebConfiguration.Insert(new WebConfiguration
             {
-             IsDeleted=false,
-             ConfigKey = webConfigDTO.ConfigKey,
-             ConfigValue = webConfigDTO.ConfigValue,
-             Description = webConfigDTO.ConfigDescription
+                IsDeleted = false,
+                ConfigKey = webConfigDTO.ConfigKey,
+                ConfigValue = webConfigDTO.ConfigValue,
+                Description = webConfigDTO.ConfigDescription
             });
             _unitOfWork.Commit();
-            return Ok(new { message="Added Succefully"});
+            return Ok(new { message = "Added Succefully" });
         }
 
 

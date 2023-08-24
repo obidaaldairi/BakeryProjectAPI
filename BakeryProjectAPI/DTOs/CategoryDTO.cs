@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Domin.Entity
+namespace BakeryProjectAPI.DTOs
 {
-    public class Category : BaseEntity
+    public class CategoryDTO
     {
         [Required]
         public string ArabicTitle { get; set; }

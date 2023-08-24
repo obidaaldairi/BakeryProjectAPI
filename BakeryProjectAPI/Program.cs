@@ -24,6 +24,19 @@ var configuration = builder.Configuration;
 
 builder.Services.AddControllers();
 
+
+// Add Cors
+
+builder.Services.AddCors(o =>
+{
+    o.AddPolicy("CoresPolicy", build =>
+    {
+        build.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+    });
+});
+
 // For Fluent Validation 
 builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<RoleValidator>();
@@ -79,7 +92,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("CoresPolicy");
 app.UseAuthorization();
 app.UseAuthentication();
 app.MapControllers();

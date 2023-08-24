@@ -4,5 +4,4 @@
     {
         public string VerificationCode { get; set; }
     }
-
 }

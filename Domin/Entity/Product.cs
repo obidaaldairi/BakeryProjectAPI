@@ -9,8 +9,10 @@ namespace Domin.Entity
 {
     public class Product : BaseEntity
     {
-        public string  ProductName { get; set; }
-        public string  Description { get; set; }
+        public string  EnglishProductName { get; set; }
+        public string  ArabicProductName { get; set; }
+        public string  EnglishDescription { get; set; }
+        public string  ArabicDescription { get; set; }
         public double  Price { get; set; }
 
         [ForeignKey("CategoryID")]
