@@ -1,24 +1,30 @@
 ﻿using BakeryProjectAPI.DTOs;
+using BCrypt.Net;
 using Domin.Entity;
 using Domin.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BakeryProjectAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class WebConfigController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-
-        public WebConfigController(IUnitOfWork unitOfWork)
+        public WebConfigController(IUnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
         }
 
 
@@ -40,5 +46,42 @@ namespace BakeryProjectAPI.Controllers
         }
 
 
+        [HttpGet("Encrypted")]
+        public ActionResult Encrypted(string encrypt = "")
+        {
+            if (encrypt.ToLower().Equals("true"))
+            {
+                string connectionstring = _configuration.GetSection("Defult").Value;
+                if (connectionstring is not null)
+                {
+                    string appSettingsPath = System.IO.Path.Combine(_webHostEnvironment.ContentRootPath, "appsettings.json");
+                    string encryptedText = _unitOfWork.CypherServices.EncryptText(connectionstring, "1752E243B37817A469405B961C77B5F9");
+                    string fileContent = System.IO.File.ReadAllText(appSettingsPath);
+                    string modifiedContent = fileContent.Replace(connectionstring, encryptedText);
+                    System.IO.File.WriteAllText(appSettingsPath, modifiedContent);
+                }
+            }
+            return Ok();
+        }
+
+
+
+        [HttpGet("Decrypted")]
+        public ActionResult Decrypted(string decrypt = "")
+        {
+            if (decrypt.ToLower().Equals("true"))
+            {
+                string connectionstring = _configuration.GetSection("Defult").Value;
+                if (connectionstring is not null)
+                {
+                    string appSettingsPath = System.IO.Path.Combine(_webHostEnvironment.ContentRootPath, "appsettings.json");
+                    string encryptedText = _unitOfWork.CypherServices.DecryptText(connectionstring, "1752E243B37817A469405B961C77B5F9");
+                    string fileContent = System.IO.File.ReadAllText(appSettingsPath);
+                    string modifiedContent = fileContent.Replace(connectionstring, encryptedText);
+                    System.IO.File.WriteAllText(appSettingsPath, modifiedContent);
+                }
+            }
+            return Ok();
+        }
     }
 }

@@ -14,8 +14,9 @@ using System.Security.Claims;
 
 namespace BakeryProjectAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     public class AuthController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -189,6 +190,11 @@ namespace BakeryProjectAPI.Controllers
             _unitOfWork.Commit();
             return Ok("Email Confirmed successfully");
         }
+
+
+
+
+
 
     }
 }

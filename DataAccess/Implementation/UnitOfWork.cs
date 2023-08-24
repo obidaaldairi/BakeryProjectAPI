@@ -14,6 +14,7 @@ namespace DataAccess.Implementation
             Role = new RoleRepository(_context);
             WebConfiguration=new WebConfigurationRepository(_context);
             UserVerification = new UserVerificationRepository(_context);
+            CypherServices = new CypherServices();
         }
 
         public IUserRepository User  { get; private set; }
@@ -22,6 +23,8 @@ namespace DataAccess.Implementation
         public IWebConfigurationRepository WebConfiguration { get; private set; }
 
         public IUserVerificationRepository UserVerification { get; private set; }
+
+        public ICypherServices CypherServices { get; private set; }
 
         public void Commit()
         {
