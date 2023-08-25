@@ -18,26 +18,14 @@ namespace DataAccess.Context
         public DbSet<UserRole> tblUserRoles { get; set; }
         public DbSet<WebConfiguration> tblWebConfigurations { get; set; }
         public DbSet<UserVerification> tblUserVerification { get; set; }
-
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-
-        //    base.OnConfiguring(optionsBuilder);
-        //    var configuration = new ConfigurationBuilder()
-        //        .AddJsonFile("appsettings.json")
-        //        .Build();
-        //    var connectionString = configuration.GetSection("Defult").Value;
-
-        //    optionsBuilder.UseSqlServer(connectionString);
-        //}
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //    base.OnModelCreating(modelBuilder);
-
-        //    modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-
-        //}
+        public DbSet<Category> tblCategories { get; set; }
+        public DbSet<Cart> tblCarts { get; set; }
+        public DbSet<Product> tblProducts { get; set; }
+        public DbSet<ProductImages> tblProductImages { get; set; }
+        public DbSet<UserInformation> tblUserInformations { get; set; }
+        public DbSet<Provider> tblProviders { get; set; }
+        public DbSet<ProductProvider> tblProductProviders { get; set; }
+        public DbSet<Admin> tblAdmins { get; set; }
 
     }
 }

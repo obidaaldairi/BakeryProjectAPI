@@ -16,6 +16,7 @@ namespace DataAccess.Implementation
             UserVerification = new UserVerificationRepository(_context);
             DbInitializer = new DbInitializer(_context);
             CypherServices = new CypherServices();
+            Category = new CategoryRepository(_context);
 
         }
 
@@ -30,6 +31,8 @@ namespace DataAccess.Implementation
         public ICypherServices CypherServices { get; private set; }
 
         public IDbInitializer DbInitializer { get; private set; }
+
+        public ICategoryRepository Category { get; private set; }
 
         public void Commit()
         {

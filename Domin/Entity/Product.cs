@@ -18,10 +18,6 @@ namespace Domin.Entity
         [ForeignKey("CategoryID")]
         public Guid CategoryID { get; set; }
         public Category Category { get; set; }
-
-        [ForeignKey("SubCategoryID")]
-        public Guid SubCategoryID { get; set; }
-        public SubCategory SubCategory { get; set; }
         [NotMapped]
         public List<ProductImages> ProductImages { get; set; }
         [NotMapped]

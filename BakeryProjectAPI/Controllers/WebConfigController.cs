@@ -51,11 +51,12 @@ namespace BakeryProjectAPI.Controllers
         {
             if (encrypt.ToLower().Equals("true"))
             {
+                string key = _unitOfWork.WebConfiguration.FindByCondition(q => q.ConfigKey == "EncryptionKey" && q.IsDeleted == false).ConfigValue;
                 string connectionstring = _configuration.GetSection("Defult").Value;
                 if (connectionstring is not null)
                 {
                     string appSettingsPath = System.IO.Path.Combine(_webHostEnvironment.ContentRootPath, "appsettings.json");
-                    string encryptedText = _unitOfWork.CypherServices.EncryptText(connectionstring, "1752E243B37817A469405B961C77B5F9");
+                    string encryptedText = _unitOfWork.CypherServices.EncryptText(connectionstring, key);
                     string fileContent = System.IO.File.ReadAllText(appSettingsPath);
                     string modifiedContent = fileContent.Replace(connectionstring, encryptedText);
                     System.IO.File.WriteAllText(appSettingsPath, modifiedContent);
@@ -71,11 +72,12 @@ namespace BakeryProjectAPI.Controllers
         {
             if (decrypt.ToLower().Equals("true"))
             {
+                string key = _unitOfWork.WebConfiguration.FindByCondition(q => q.ConfigKey == "EncryptionKey" && q.IsDeleted == false).ConfigValue;
                 string connectionstring = _configuration.GetSection("Defult").Value;
                 if (connectionstring is not null)
                 {
                     string appSettingsPath = System.IO.Path.Combine(_webHostEnvironment.ContentRootPath, "appsettings.json");
-                    string encryptedText = _unitOfWork.CypherServices.DecryptText(connectionstring, "1752E243B37817A469405B961C77B5F9");
+                    string encryptedText = _unitOfWork.CypherServices.DecryptText(connectionstring, key);
                     string fileContent = System.IO.File.ReadAllText(appSettingsPath);
                     string modifiedContent = fileContent.Replace(connectionstring, encryptedText);
                     System.IO.File.WriteAllText(appSettingsPath, modifiedContent);

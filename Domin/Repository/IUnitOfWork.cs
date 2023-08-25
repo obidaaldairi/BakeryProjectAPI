@@ -8,6 +8,7 @@
         IWebConfigurationRepository WebConfiguration { get; }
         ICypherServices CypherServices { get; }
         IDbInitializer DbInitializer { get; }
+        ICategoryRepository Category { get; }
         void Commit();
     }
 

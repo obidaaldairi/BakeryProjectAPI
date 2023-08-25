@@ -4,9 +4,9 @@ namespace BakeryProjectAPI.DTOs
 {
     public class CategoryDTO
     {
-        [Required]
         public string ArabicTitle { get; set; }
-        [Required]
         public string EnglishTitle { get; set; }
+        public Guid CategoryID { get; set; }
+
     }
 }

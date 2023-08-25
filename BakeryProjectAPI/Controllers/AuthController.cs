@@ -41,8 +41,8 @@ namespace BakeryProjectAPI.Controllers
                 {
                     var user = new User
                     {
-                        ArabicUserName = registerDTO.UserName,
-                        EnglishUserName = registerDTO.UserName,
+                        ArabicUserName = registerDTO.ArabicUserName,
+                        EnglishUserName = registerDTO.EnglishUserName,
                         Email = registerDTO.Email,
                         Password = BCrypt.Net.BCrypt.HashPassword(registerDTO.Password),
                         ArabicBio = "",
@@ -57,7 +57,7 @@ namespace BakeryProjectAPI.Controllers
                         ArabicRole = "",
                         EnglishRole = "",
                         PhoneNumberConfirmed = false,
-                        Avatar = $"https://ui-avatars.com/api/?name={registerDTO.UserName}"
+                        Avatar = $"https://ui-avatars.com/api/?name={registerDTO.EnglishUserName}"
                     };
                     var check = _unitOfWork.User.FindIsExistByCondition(x => x.Email == registerDTO.Email);
                     if (check)
