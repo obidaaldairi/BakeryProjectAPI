@@ -4,6 +4,7 @@ using DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230825160325_AddEnglishRoleName")]
+    partial class AddEnglishRoleName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -218,6 +220,9 @@ namespace DataAccess.Migrations
                     b.Property<string>("ArabicBio")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ArabicRole")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ArabicUserName")
                         .HasColumnType("nvarchar(max)");
 
@@ -237,6 +242,9 @@ namespace DataAccess.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("EnglishBio")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EnglishRole")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EnglishUserName")

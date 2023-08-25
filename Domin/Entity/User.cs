@@ -25,8 +25,6 @@ namespace Domin.Entity
         public DateTime BirthDate { get; set; }
         public DateTime LastLoginDate { get; set; }
         public bool IsActive { get; set; }
-        public string ArabicRole { get; set; }
-        public string EnglishRole { get; set; }
         [NotMapped]
         public ICollection<Role> Roles { get; set; } = new List<Role>();
         [NotMapped]

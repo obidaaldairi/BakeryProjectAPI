@@ -5,6 +5,7 @@
         IUserRepository User { get; }
         IUserVerificationRepository UserVerification { get; }
         IRoleRepository Role { get; }
+        IUserRoleRepository UserRole { get; }
         IWebConfigurationRepository WebConfiguration { get; }
         ICypherServices CypherServices { get; }
         IDbInitializer DbInitializer { get; }

@@ -54,10 +54,8 @@ namespace BakeryProjectAPI.Controllers
                         IsDeleted = false,
                         LastLoginDate = new DateTime(),
                         PhoneNumber = registerDTO.PhoneNumber,
-                        ArabicRole = "",
-                        EnglishRole = "",
                         PhoneNumberConfirmed = false,
-                        Avatar = $"https://ui-avatars.com/api/?name={registerDTO.EnglishUserName}"
+                        Avatar = $"https://ui-avatars.com/api/?name={registerDTO.EnglishUserName}",
                     };
                     var check = _unitOfWork.User.FindIsExistByCondition(x => x.Email == registerDTO.Email);
                     if (check)
@@ -65,6 +63,12 @@ namespace BakeryProjectAPI.Controllers
                         return BadRequest("This Email is Already Exist");
                     }
                     _unitOfWork.User.Insert(user);
+                    _unitOfWork.Commit();
+                    _unitOfWork.UserRole.Insert(new UserRole
+                    {
+                        UsersId = user.ID,
+                        RoleId = _unitOfWork.Role.FindByCondition(x=>x.EnglishRoleName == "Member").ID,
+                    });
                     _unitOfWork.Commit();
                     var VCode = Math.Abs(Guid.NewGuid().GetHashCode()).ToString().Substring(0, 5);
                     _unitOfWork.UserVerification.Insert(new UserVerification

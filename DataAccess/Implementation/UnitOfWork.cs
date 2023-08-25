@@ -17,12 +17,16 @@ namespace DataAccess.Implementation
             DbInitializer = new DbInitializer(_context);
             CypherServices = new CypherServices();
             Category = new CategoryRepository(_context);
+            UserRole = new UserRoleRepository(_context);
+
 
         }
 
         public IUserRepository User { get; private set; }
 
         public IRoleRepository Role { get; private set; }
+        public IUserRoleRepository UserRole { get; private set; }
+
 
         public IWebConfigurationRepository WebConfiguration { get; private set; }
 
