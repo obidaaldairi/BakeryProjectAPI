@@ -13,7 +13,8 @@ namespace DataAccess.Validation
         public UserValidator()
         {
             RuleFor(x => x.Email).NotEmpty().WithMessage("Please This Field Is Requird");
-            RuleFor(x => x.UserName).NotEmpty().WithMessage("Please This Field Is Requird");
+            RuleFor(x => x.ArabicUserName).NotEmpty().WithMessage("Please This Field Is Requird");
+            RuleFor(x => x.EnglishUserName).NotEmpty().WithMessage("Please This Field Is Requird");
             RuleFor(x => x.PhoneNumber).NotEmpty().WithMessage("Please This Field Is Requird");
             RuleFor(x => x.Password).NotEmpty().WithMessage("Please This Field Is Requird");
         }

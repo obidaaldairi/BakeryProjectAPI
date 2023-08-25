@@ -27,7 +27,9 @@ namespace DataAccess.Implementation
             }
             else
             {
-                return this.FindAllByCondition(q => q.IsDeleted == false && (q.UserName.Contains(filter) || q.Email.Contains(filter)));
+                return this.FindAllByCondition(q => q.IsDeleted == false && (q.ArabicUserName.Contains(filter)
+                ||q.EnglishUserName.Contains(filter)
+                || q.Email.Contains(filter)));
             }
         }
 

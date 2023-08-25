@@ -5,7 +5,9 @@ namespace BakeryProjectAPI.DTOs
     public class RegisterDTO
     {
         [Required]
-        public string UserName { get; set; }
+        public string ArabicUserName { get; set; }
+        [Required]
+        public string EnglishUserName { get; set; }
         [Required]
         public string PhoneNumber { get; set; }
         [Required]

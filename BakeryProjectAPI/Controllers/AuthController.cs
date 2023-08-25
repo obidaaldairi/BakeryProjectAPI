@@ -41,18 +41,21 @@ namespace BakeryProjectAPI.Controllers
                 {
                     var user = new User
                     {
-                        UserName = registerDTO.UserName,
+                        ArabicUserName = registerDTO.UserName,
+                        EnglishUserName = registerDTO.UserName,
                         Email = registerDTO.Email,
                         Password = BCrypt.Net.BCrypt.HashPassword(registerDTO.Password),
-                        Bio = "",
+                        ArabicBio = "",
+                        EnglishBio = "",
                         BirthDate = registerDTO.BirthDate,
-                        CreatedAT = DateTime.Now,
+                        CreatedAt = DateTime.Now,
                         EmailConfirmed = false,
                         IsActive = false,
                         IsDeleted = false,
                         LastLoginDate = new DateTime(),
                         PhoneNumber = registerDTO.PhoneNumber,
-                        Role = "",
+                        ArabicRole = "",
+                        EnglishRole = "",
                         PhoneNumberConfirmed = false,
                         Avatar = $"https://ui-avatars.com/api/?name={registerDTO.UserName}"
                     };
