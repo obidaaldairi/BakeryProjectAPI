@@ -55,5 +55,23 @@ namespace BakeryProjectAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("GetAllRole")]
+        public ActionResult GetAllRole()
+        {
+            try
+            {
+                var Roles = _unitOfWork.Role.GetAll();
+                if (!Roles.Any())
+                {
+                    return NoContent();
+                }
+                return Ok(Roles);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
