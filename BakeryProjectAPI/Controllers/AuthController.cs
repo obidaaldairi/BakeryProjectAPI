@@ -39,6 +39,7 @@ namespace BakeryProjectAPI.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    // Save in User Table
                     var user = new User
                     {
                         ArabicUserName = registerDTO.ArabicUserName,
@@ -64,25 +65,15 @@ namespace BakeryProjectAPI.Controllers
                     }
                     _unitOfWork.User.Insert(user);
                     _unitOfWork.Commit();
+
+                    // Save in User Roles Table
                     _unitOfWork.UserRole.Insert(new UserRole
                     {
-                        UsersId = user.ID,
+                        UserId = user.ID,
                         RoleId = _unitOfWork.Role.FindByCondition(x=>x.EnglishRoleName == "Member").ID,
                     });
                     _unitOfWork.Commit();
-                    var VCode = Math.Abs(Guid.NewGuid().GetHashCode()).ToString().Substring(0, 5);
-                    _unitOfWork.UserVerification.Insert(new UserVerification
-                    {
-                        UserID = user.ID,
-                        CreationDate = DateTime.Now,
-                        ExpireDate = DateTime.Now.AddDays(1),
-                        IsDeleted = false,
-                        IsVerify  = false,
-                        VerificationCode = VCode
-                    });
-                    _unitOfWork.Commit();
-                    string body = $"Thank you for registering on our website. Here is your verification code: {VCode}. Please enter it to confirm your email.";
-                    _emailSender.SendEmailAsync(registerDTO.Email , "Verification Code" , body);
+
                     return Ok();
                 }
                 else
@@ -154,18 +145,27 @@ namespace BakeryProjectAPI.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Logout()
         {
-            string UserIDClaim = User.FindFirst("Id").Value;
-            var user = _unitOfWork.User.FindByCondition(x => x.ID.ToString() == UserIDClaim);
-            user.IsActive = false;
-            _unitOfWork.User.Update(user);
-            _unitOfWork.Commit();
-            // Remove the authentication token cookie
-            Response.Cookies.Delete("AuthToken");
+            try
+            {
+                string UserIDClaim = User.FindFirst("Id").Value;
+                var user = _unitOfWork.User.FindByCondition(x => x.ID.ToString() == UserIDClaim);
+                user.IsActive = false;
+                _unitOfWork.User.Update(user);
+                _unitOfWork.Commit();
+                // Remove the authentication token cookie
+                Response.Cookies.Delete("AuthToken");
 
-            // Remove the Authorization header
-            Response.Headers.Remove("Authorization");
+                // Remove the Authorization header
+                Response.Headers.Remove("Authorization");
 
-            return Ok("Logged out successfully");
+                return Ok("Logged out successfully");
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+
         }
 
 
@@ -173,33 +173,73 @@ namespace BakeryProjectAPI.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public ActionResult VerfiyEmail(VerfiyDTO verfiyDTO)
         {
-            string UserIDClaim = User.FindFirst("Id").Value;
-            var user = _unitOfWork.User.FindByCondition(x => x.ID.ToString() == UserIDClaim);
-            var userVerifiy = _unitOfWork.UserVerification
-                .FindByCondition(x => x.UserID.ToString() == UserIDClaim 
-                && x.VerificationCode == verfiyDTO.VerificationCode 
-                && x.IsDeleted == false
-                && x.IsVerify == false
-                && x.ExpireDate >= DateTime.Now
-                && x.CreationDate <= DateTime.Now);
-            if (userVerifiy is null)
+            try
             {
-                return BadRequest("Your verification code is not matching.");
+                string UserIDClaim = User.FindFirst("Id").Value;
+                var user = _unitOfWork.User.FindByCondition(x => x.ID.ToString() == UserIDClaim);
+                var userVerifiy = _unitOfWork.UserVerification
+                    .FindByCondition(x => x.UserID.ToString() == UserIDClaim
+                    && x.VerificationCode == verfiyDTO.VerificationCode
+                    && x.IsDeleted == false
+                    && x.IsVerify == false
+                    && x.ExpireDate >= DateTime.Now
+                    && x.CreationDate <= DateTime.Now);
+                if (userVerifiy is null)
+                {
+                    return BadRequest("Your verification code is not matching.");
+                }
+                //Update  user
+                user.EmailConfirmed = true;
+                _unitOfWork.User.Update(user);
+                _unitOfWork.Commit();
+                //Update  userVerification
+                userVerifiy.IsVerify = true;
+                userVerifiy.IsDeleted = true;
+                _unitOfWork.UserVerification.Update(userVerifiy);
+                _unitOfWork.Commit();
+                return Ok("Email Confirmed successfully");
             }
-            //Update  user
-            user.EmailConfirmed = true;
-            _unitOfWork.User.Update(user);
-            _unitOfWork.Commit();
-            //Update  userVerification
-            userVerifiy.IsVerify = true;
-            userVerifiy.IsDeleted = true;
-            _unitOfWork.UserVerification.Update(userVerifiy);
-            _unitOfWork.Commit();
-            return Ok("Email Confirmed successfully");
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 
 
+        [HttpPost("SendVerificationEmailCode")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public ActionResult SendVerificationEmailCode()
+        {
+            try
+            {
+                var claims = User.Claims;
+                var UserIDClaim = Guid.Parse(User.FindFirst("Id").Value);
+                string UserEmailClaim = User.FindFirst("email").Value;
+
+                // Save in User Verification Table
+                var VCode = Math.Abs(Guid.NewGuid().GetHashCode()).ToString().Substring(0, 5);
+
+                _unitOfWork.UserVerification.Insert(new UserVerification
+                {
+                    UserID = UserIDClaim,
+                    CreationDate = DateTime.Now,
+                    ExpireDate = DateTime.Now.AddDays(1),
+                    IsDeleted = false,
+                    IsVerify = false,
+                    VerificationCode = VCode
+                });
+                _unitOfWork.Commit();
+                string body = $"Thank you for registering on our website. Here is your verification code: {VCode}. Please enter it to confirm your email.";
+                _emailSender.SendEmailAsync(UserEmailClaim, "Verification Code", body);
+                return Ok("Email Confirmed successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+           
+        }
 
 
 

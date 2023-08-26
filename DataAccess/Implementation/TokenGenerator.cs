@@ -11,17 +11,22 @@ namespace DataAccess.Implementation
     public class TokenGenerator : ITokenGenerator
     {
         private readonly IConfiguration _config;
-        public TokenGenerator(IConfiguration config)
+        private readonly IUnitOfWork _unitOfWork;
+        public TokenGenerator(IConfiguration config, IUnitOfWork unitOfWork)
         {
             _config = config;
-
+            _unitOfWork = unitOfWork;
         }
         public string CreateToken(User user)
         {
+
+            //var roleuser = _unitOfWork.UserRole.FindByConditionWithIncludes(q => q.UsersId == user.ID, u => u.Role).Role.EnglishRoleName;
+            var roleuser = _unitOfWork.UserRole.GetUserRole(user.ID);
             var claims = new List<Claim>
             {
                  new Claim("Id",user.ID.ToString()),
-                 new Claim(JwtRegisteredClaimNames.Email,user.Email),
+                 new Claim("Role",roleuser),
+                 new Claim("Email",user.Email),
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8
                 .GetBytes(_config.GetSection("secret_Key").Value));

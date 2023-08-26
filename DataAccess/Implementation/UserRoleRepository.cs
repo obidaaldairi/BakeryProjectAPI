@@ -13,6 +13,12 @@ namespace DataAccess.Implementation
             return this.FindAllByCondition(q => q.IsDeleted == false).Count();
         }
 
+        public string GetUserRole(Guid userID)
+        {
+            return this.FindByConditionWithIncludes(
+                ur => ur.UserId == userID,
+                u => u.Role)?.Role?.EnglishRoleName;
+        }
     }
 
 
