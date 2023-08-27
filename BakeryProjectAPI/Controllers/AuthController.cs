@@ -56,7 +56,7 @@ namespace BakeryProjectAPI.Controllers
                         LastLoginDate = new DateTime(),
                         PhoneNumber = registerDTO.PhoneNumber,
                         PhoneNumberConfirmed = false,
-                        Avatar = $"https://ui-avatars.com/api/?name={registerDTO.EnglishUserName}",
+                        Avatar = $"https://ui-avatars.com/api/?name={registerDTO.EnglishUserName}&length=1",
                     };
                     var check = _unitOfWork.User.FindIsExistByCondition(x => x.Email == registerDTO.Email);
                     if (check)
@@ -213,7 +213,6 @@ namespace BakeryProjectAPI.Controllers
         {
             try
             {
-                var claims = User.Claims;
                 var UserIDClaim = Guid.Parse(User.FindFirst("Id").Value);
                 string UserEmailClaim = User.FindFirst("email").Value;
 

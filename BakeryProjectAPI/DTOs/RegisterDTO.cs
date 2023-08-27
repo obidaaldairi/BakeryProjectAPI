@@ -17,7 +17,8 @@ namespace BakeryProjectAPI.DTOs
         [Required]
         [Compare("Password", ErrorMessage = "The password and Confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
-        [Required]
         public DateTime BirthDate { get; set; }
+        public Guid RoleID { get; set; }
+
     }
 }

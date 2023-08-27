@@ -32,9 +32,8 @@ namespace DataAccess.Implementation
                 || q.Email.Contains(filter)));
             }
         }
-
-        
     }
+
 
 
 

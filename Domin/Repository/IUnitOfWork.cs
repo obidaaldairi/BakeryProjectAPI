@@ -10,6 +10,10 @@
         ICypherServices CypherServices { get; }
         IDbInitializer DbInitializer { get; }
         ICategoryRepository Category { get; }
+        IProductRepository Product { get; }
+        IProductProviderRepository ProductProvider { get; }
+
+
         void Commit();
     }
 

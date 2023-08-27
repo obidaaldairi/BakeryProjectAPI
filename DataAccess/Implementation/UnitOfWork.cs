@@ -18,6 +18,8 @@ namespace DataAccess.Implementation
             CypherServices = new CypherServices();
             Category = new CategoryRepository(_context);
             UserRole = new UserRoleRepository(_context);
+            Product = new ProductRepository(_context);
+            ProductProvider = new ProductProviderRepository(_context);
 
 
         }
@@ -37,6 +39,10 @@ namespace DataAccess.Implementation
         public IDbInitializer DbInitializer { get; private set; }
 
         public ICategoryRepository Category { get; private set; }
+
+        public IProductRepository Product { get; private set; }
+
+        public IProductProviderRepository ProductProvider { get; private set; }
 
         public void Commit()
         {

@@ -7,9 +7,9 @@ namespace Domin.Entity
         public string EnglishRoleName { get; set; } = string.Empty;
         public string ArabicRoleName { get; set; } = string.Empty;
 
-        [NotMapped]
-        public ICollection<User> Users { get; set; } = new List<User>();
-        [NotMapped]
-        public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        //[NotMapped]
+        //public ICollection<User> Users { get; set; } = new List<User>();
+        //[NotMapped]
+        //public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     }
 }
