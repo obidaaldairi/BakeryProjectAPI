@@ -20,7 +20,8 @@ namespace DataAccess.Implementation
             UserRole = new UserRoleRepository(_context);
             Product = new ProductRepository(_context);
             ProductProvider = new ProductProviderRepository(_context);
-
+            Provider=new ProviderRepository(_context); 
+            Admin = new AdminRepository(_context);
 
         }
 
@@ -43,6 +44,10 @@ namespace DataAccess.Implementation
         public IProductRepository Product { get; private set; }
 
         public IProductProviderRepository ProductProvider { get; private set; }
+
+        public IProviderRepository Provider { get; private set; }
+
+        public IAdminRepository Admin  {get; private set; }
 
         public void Commit()
         {

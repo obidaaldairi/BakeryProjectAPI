@@ -23,7 +23,7 @@ namespace BakeryProjectAPI.Controllers
         }
 
         [HttpPost("AddProduct")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Roles = "Provider")]
         public ActionResult AddProduct(ProductDTO DTO)
         {
             try
@@ -36,6 +36,7 @@ namespace BakeryProjectAPI.Controllers
                     {
                         return Ok("The Product Is Exist");
                     }
+
                     //add product
                     var product = _unitOfWork.Product.Insert(new Product
                     {
@@ -48,12 +49,20 @@ namespace BakeryProjectAPI.Controllers
                         IsDeleted = false
                     });
                     _unitOfWork.Commit();
+
+
+                    //get provider ID
+                    var provider = _unitOfWork.Provider.FindByCondition(x => x.UserID == Guid.Parse(User.FindFirst("Id").Value));
+                    if(provider == null)
+                    {
+                        return BadRequest("Please Login Again");
+                    }
                     //add Product Provider
                     _unitOfWork.ProductProvider.Insert(new ProductProvider
                     {
                         ProductID = product.ID,
                         IsDeleted = false,
-                        ProviderID = Guid.Parse(User.FindFirst("Id").Value)
+                        ProviderID = provider.ID
                     });
                     _unitOfWork.Commit();
                     return Ok();

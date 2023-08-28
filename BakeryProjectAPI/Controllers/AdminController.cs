@@ -60,7 +60,7 @@ namespace BakeryProjectAPI.Controllers
         {
             try
             {
-                var Roles = _unitOfWork.Role.FindAllByCondition(x=>x.IsDeleted == false);
+                var Roles = _unitOfWork.Role.FindAllByCondition(x => x.IsDeleted == false);
                 if (!Roles.Any())
                 {
                     return NoContent();
@@ -115,6 +115,32 @@ namespace BakeryProjectAPI.Controllers
                         RoleId = DTO.RoleID,
                     });
                     _unitOfWork.Commit();
+
+                    var role = _unitOfWork.Role.FindByCondition(q => q.ID == DTO.RoleID).EnglishRoleName;
+
+                    switch (role)
+                    {
+                        case "Provider":
+                            // Provider
+                            _unitOfWork.Provider.Insert(new Provider
+                            {
+                                UserID = user.ID,
+                                IsDeleted = false,
+                            });
+                            _unitOfWork.Commit();
+                            break;
+
+                        case "Admin":
+                            // Admin
+                            _unitOfWork.Admin.Insert(new Admin
+                            {
+                                UserID = user.ID,
+                                IsDeleted = false,
+                            });
+                            _unitOfWork.Commit();
+                            break;
+                    }
+
 
                     return Ok();
                 }

@@ -12,7 +12,8 @@
         ICategoryRepository Category { get; }
         IProductRepository Product { get; }
         IProductProviderRepository ProductProvider { get; }
-
+        IProviderRepository Provider { get; }
+        IAdminRepository Admin { get; }
 
         void Commit();
     }

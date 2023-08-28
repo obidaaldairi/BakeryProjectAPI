@@ -25,8 +25,11 @@ namespace DataAccess.Implementation
             var claims = new List<Claim>
             {
                  new Claim("Id",user.ID.ToString()),
-                 new Claim("Role",roleuser),
+                 new Claim(ClaimTypes.Role, roleuser),
                  new Claim("Email",user.Email),
+                 //new Claim("Role",roleuser),
+
+
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8
                 .GetBytes(_config.GetSection("secret_Key").Value));
