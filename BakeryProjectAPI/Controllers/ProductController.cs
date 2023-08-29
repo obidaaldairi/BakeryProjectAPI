@@ -1,9 +1,7 @@
 ﻿using BakeryProjectAPI.DTOs;
 using Domin.Entity;
 using Domin.Repository;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BakeryProjectAPI.Controllers
@@ -15,11 +13,12 @@ namespace BakeryProjectAPI.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailSender _emailSender;
-
-        public ProductController(IUnitOfWork unitOfWork, IEmailSender emailSender)
+        private readonly IWebHostEnvironment _hosting;
+        public ProductController(IUnitOfWork unitOfWork, IEmailSender emailSender, IWebHostEnvironment hosting)
         {
             _unitOfWork = unitOfWork;
             _emailSender = emailSender;
+            _hosting = hosting;
         }
 
         [HttpPost("AddProduct")]
@@ -52,8 +51,8 @@ namespace BakeryProjectAPI.Controllers
 
 
                     //get provider ID
-                    var provider = _unitOfWork.Provider.FindByCondition(x => x.UserID == Guid.Parse(User.FindFirst("Id").Value));
-                    if(provider == null)
+                    var providerID = _unitOfWork.Provider.GetCurrentLoggedInUserID();
+                    if(providerID == Guid.Empty)
                     {
                         return BadRequest("Please Login Again");
                     }
@@ -62,7 +61,7 @@ namespace BakeryProjectAPI.Controllers
                     {
                         ProductID = product.ID,
                         IsDeleted = false,
-                        ProviderID = provider.ID
+                        ProviderID = providerID
                     });
                     _unitOfWork.Commit();
                     return Ok();
@@ -79,6 +78,66 @@ namespace BakeryProjectAPI.Controllers
             }
         }
 
+
+        [HttpPost("AddProductImage")]
+        [Authorize(Roles = "Provider")]
+        public ActionResult AddProductImage(ProductImageDTO model)
+        {
+            try
+            {
+                // for test
+                var headerTokenAuth = Request.Headers["Authorization"];
+                if (ModelState.IsValid)
+                {
+                    if (string.IsNullOrEmpty(model.Image))
+                    {
+                        return BadRequest("Please Choose File.");
+                    }
+                   var productImages= _unitOfWork.ProductImage.Insert(new ProductImages
+                    {
+                        ProductID= model.ProductID,
+                        IsDeleted= false,
+                    });
+                    UploadImage(productImages);
+                    _unitOfWork.Commit();
+                    return Ok("You have uploaded file successfully.");
+                }
+                else
+                {
+                    return BadRequest(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+
+        private void UploadImage(ProductImages model)
+        {
+            // API Files Uplaod Function 
+            var file = HttpContext.Request.Form.Files;
+            if (file.Count() > 0)
+            {
+                string ImageName = Guid.NewGuid().ToString() + Path.GetExtension(file[0].FileName);
+                string directoryPath = Path.Combine(_hosting.ContentRootPath, "Uploads", "Images");
+                string filePath = Path.Combine(directoryPath, ImageName);
+                var filestream = new FileStream(filePath, FileMode.Create);
+                file[0].CopyTo(filestream);
+                model.Image = ImageName;
+            }
+            else if (model.Image == null)
+            {
+                model.Image = "default.png";
+            }
+            else
+            {
+                model.Image = model.Image;
+            }
+        }
 
     }
 

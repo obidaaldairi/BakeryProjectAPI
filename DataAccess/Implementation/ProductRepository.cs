@@ -26,9 +26,7 @@ namespace DataAccess.Implementation
                 || q.EnglishProductName.Contains(filter)));
             }
         }
-
-
-    }
+    }    
 
 
 

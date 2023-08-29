@@ -26,7 +26,6 @@ builder.Services.AddControllers();
 
 
 // Add Cors
-
 builder.Services.AddCors(o =>
 {
     o.AddPolicy("CoresPolicy", build =>
@@ -81,6 +80,9 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddHttpContextAccessor();
+
 
 var app = builder.Build();
 

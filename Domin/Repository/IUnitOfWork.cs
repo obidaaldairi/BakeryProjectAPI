@@ -14,7 +14,8 @@
         IProductProviderRepository ProductProvider { get; }
         IProviderRepository Provider { get; }
         IAdminRepository Admin { get; }
-
+        ICartRepository Cart { get; }
+        IProductImageRepository ProductImage { get; }
         void Commit();
     }
 

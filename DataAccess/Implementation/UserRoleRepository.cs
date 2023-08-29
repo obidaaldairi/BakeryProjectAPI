@@ -19,10 +19,7 @@ namespace DataAccess.Implementation
                 ur => ur.UserId == userID,
                 u => u.Role)?.Role?.EnglishRoleName;
         }
-    }
-
-
-
+    }    
 
 
 }
