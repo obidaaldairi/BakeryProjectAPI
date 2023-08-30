@@ -13,7 +13,9 @@ namespace BakeryProjectAPI.DTOs
         public string EnglishDescription { get; set; }
         public string ArabicDescription { get; set; }
         [Required]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
+        [Required]
+        public int Quantity { get; set; }
         [Required]
         public Guid CategoryID { get; set; }
     }

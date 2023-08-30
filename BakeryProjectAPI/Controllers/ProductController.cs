@@ -20,7 +20,6 @@ namespace BakeryProjectAPI.Controllers
             _emailSender = emailSender;
             _hosting = hosting;
         }
-
         [HttpPost("AddProduct")]
         [Authorize(Roles = "Provider")]
         public ActionResult AddProduct(ProductDTO DTO)
@@ -35,7 +34,8 @@ namespace BakeryProjectAPI.Controllers
                     {
                         return Ok("The Product Is Exist");
                     }
-
+                    //get provider ID
+                    var providerID = _unitOfWork.Provider.GetCurrentLoggedInUserID();
                     //add product
                     var product = _unitOfWork.Product.Insert(new Product
                     {
@@ -45,14 +45,11 @@ namespace BakeryProjectAPI.Controllers
                         EnglishDescription = DTO.EnglishDescription,
                         CategoryID = DTO.CategoryID,
                         Price = DTO.Price,
+                        Quantity = DTO.Quantity,
                         IsDeleted = false
                     });
                     _unitOfWork.Commit();
-
-
-                    //get provider ID
-                    var providerID = _unitOfWork.Provider.GetCurrentLoggedInUserID();
-                    if(providerID == Guid.Empty)
+                    if (providerID == Guid.Empty)
                     {
                         return BadRequest("Please Login Again");
                     }
@@ -77,22 +74,16 @@ namespace BakeryProjectAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
         [HttpPost("AddProductImage")]
         [Authorize(Roles = "Provider")]
-        public ActionResult AddProductImage(ProductImageDTO model)
+        public ActionResult AddProductImage([FromForm] ProductImageDTO model)
         {
             try
             {
                 // for test
-                var headerTokenAuth = Request.Headers["Authorization"];
+                //var headerTokenAuth = Request.Headers["Authorization"];
                 if (ModelState.IsValid)
                 {
-                    if (string.IsNullOrEmpty(model.Image))
-                    {
-                        return BadRequest("Please Choose File.");
-                    }
                    var productImages= _unitOfWork.ProductImage.Insert(new ProductImages
                     {
                         ProductID= model.ProductID,
@@ -113,9 +104,6 @@ namespace BakeryProjectAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
-
         private void UploadImage(ProductImages model)
         {
             // API Files Uplaod Function 

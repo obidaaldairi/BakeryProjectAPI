@@ -13,7 +13,9 @@ namespace Domin.Entity
         public string  ArabicProductName { get; set; }
         public string  EnglishDescription { get; set; }
         public string  ArabicDescription { get; set; }
-        public double  Price { get; set; }
+        public decimal  Price { get; set; }
+        public int Quantity { get; set; }
+
 
         [ForeignKey("CategoryID")]
         public Guid CategoryID { get; set; }

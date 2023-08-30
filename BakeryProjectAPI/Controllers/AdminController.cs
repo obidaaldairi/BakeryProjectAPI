@@ -139,6 +139,92 @@ namespace BakeryProjectAPI.Controllers
                             });
                             _unitOfWork.Commit();
                             break;
+                        default:
+                            break;
+                    }
+
+
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        [HttpGet("DeleteAdminUser")]
+        public ActionResult DeleteAdminUser(Guid UserID)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    //Check User
+                    var user = _unitOfWork.User.FindByCondition(x => x.ID == UserID && x.IsDeleted == false);
+                    if (user == null)
+                    {
+                        return BadRequest("Something Went Wrong");
+                    }
+                    // delete Main User
+                    user.IsDeleted = true;
+                    _unitOfWork.User.Update(user);
+                    _unitOfWork.Commit();
+                    // delete  User Role
+                    var userRole = _unitOfWork.UserRole.FindByCondition(x => x.UserId == user.ID);
+                    userRole.IsDeleted = true;
+                    _unitOfWork.UserRole.Update(userRole);
+                    _unitOfWork.Commit();
+
+                    var role = _unitOfWork.UserRole.FindByConditionWithIncludes(q => q.UserId == UserID, x=>x.Role).Role.EnglishRoleName;
+                    if (string.IsNullOrEmpty(role)) 
+                    {
+                        return BadRequest();
+                    }
+                    switch (role)
+                    {
+                        case "Provider":
+                            // delete Provider
+                            var provider = _unitOfWork.Provider.FindByCondition(x => x.UserID == UserID);
+                            provider.IsDeleted = true;
+                            _unitOfWork.Provider.Update(provider);
+                            _unitOfWork.Commit();
+                            var productProvider = _unitOfWork.ProductProvider.FindAllByCondition(x => x.ProviderID == provider.ID);
+                            productProvider.ForEach((item) =>
+                            {
+                                //delete ProductProvider
+                                item.IsDeleted = true;
+                                _unitOfWork.ProductProvider.Update(item);
+                                _unitOfWork.Commit();
+
+                                //delete Product
+                                var product = _unitOfWork.Product.FindByCondition(x => x.ID == item.ProductID);
+                                product.IsDeleted = true;
+                                _unitOfWork.Product.Update(product);
+                                _unitOfWork.Commit();
+
+                                var productImage = _unitOfWork.ProductImage.FindByCondition(x => x.ProductID == product.ID);
+                                productImage.IsDeleted = true;
+                                _unitOfWork.ProductImage.Update(productImage);
+                                _unitOfWork.Commit();
+                            });
+                            break;
+
+                        case "Admin":
+                            // delete Admin
+                            var admin = _unitOfWork.Admin.FindByCondition(x => x.UserID == UserID);
+                            admin.IsDeleted = true;
+                            _unitOfWork.Admin.Update(admin);
+                            _unitOfWork.Commit();
+                            break;
+                        default:
+                            break;
                     }
 
 

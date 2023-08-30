@@ -27,10 +27,11 @@ namespace DataAccess.Implementation
         public Guid GetCurrentLoggedInUserID()
         {
             var userIdClaim = _httpContextAccessor.HttpContext.User.FindFirst("Id");
+            var provider = this.FindByCondition(x => x.UserID == Guid.Parse(userIdClaim.Value));
 
             if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
             {
-                return userId;
+                return provider.ID;
             }
             throw new InvalidOperationException("No logged-in user found.");
         }
