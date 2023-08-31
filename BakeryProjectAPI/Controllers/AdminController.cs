@@ -1,6 +1,7 @@
 ﻿using BakeryProjectAPI.DTOs;
 using Domin.Entity;
 using Domin.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace BakeryProjectAPI.Controllers
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
+    [Authorize(Roles ="Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
