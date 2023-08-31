@@ -12,7 +12,7 @@ namespace Domin.Repository
         public List<User> Search(string filter = "");
         public int Count();
         public Guid GetCurrentLoggedInUserID();
-        public Guid GetCurrentLoggedInUserEmail();
-        public Guid GetCurrentLoggedInUserRole();
+        public string GetCurrentLoggedInUserEmail();
+        public string GetCurrentLoggedInUserRole();
     }
 }

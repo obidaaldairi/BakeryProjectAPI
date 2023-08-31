@@ -26,9 +26,16 @@ namespace DataAccess.Implementation
         {
             var from = _context.tblWebConfigurations.Where(x => x.ConfigKey == "From").FirstOrDefault().ConfigValue;
             var password = _context.tblWebConfigurations.Where(x => x.ConfigKey == "Password").FirstOrDefault().ConfigValue;
-            var Port = Convert.ToInt32(_context.tblWebConfigurations.Where(x => x.ConfigKey == "Port").FirstOrDefault().ConfigValue);
+            int Port = Convert.ToInt32(_context.tblWebConfigurations.Where(x => x.ConfigKey == "Port").FirstOrDefault().ConfigValue);
             var SMTP = _context.tblWebConfigurations.Where(x => x.ConfigKey == "SMTP").FirstOrDefault().ConfigValue;
 
+            if(string.IsNullOrEmpty(from) 
+                || string.IsNullOrEmpty(password) 
+                || string.IsNullOrEmpty(Port.ToString()) 
+                || string.IsNullOrEmpty(Port.ToString()))
+            {
+                return Task.FromException(new Exception("The value can't be null."));
+            }
 
             var client = new SmtpClient(SMTP, Port)
             {
@@ -38,7 +45,7 @@ namespace DataAccess.Implementation
                 "tyagwdnmxgrkkfky")
             };
 
-            return client.SendMailAsync(
+            return  client.SendMailAsync(
                 new MailMessage(from,
                                 to: email,
                                 subject,

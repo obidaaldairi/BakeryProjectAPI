@@ -17,19 +17,33 @@ namespace DataAccess.Implementation
         {
             _httpContextAccessor = httpContextAccessor;
         }
+        public List<User> Search(string filter = "")
+        {
+            filter = filter.ToLower();
+            if (string.IsNullOrEmpty(filter))
+            {
+                return this.FindAllByCondition(q => q.IsDeleted == false);
+            }
+            else
+            {
+                return this.FindAllByCondition(q => q.IsDeleted == false && (q.ArabicUserName.Contains(filter)
+                || q.EnglishUserName.Contains(filter)
+                || q.Email.Contains(filter)));
+            }
+        }
 
         public int Count()
         {
-            return this.FindAllByCondition(q=>q.IsDeleted==false).Count();
+            return this.FindAllByCondition(q => q.IsDeleted == false).Count();
         }
 
-        public Guid GetCurrentLoggedInUserEmail()
+        public string GetCurrentLoggedInUserEmail()
         {
             var userEmailClaim = _httpContextAccessor.HttpContext.User.FindFirst("Email");
 
-            if (userEmailClaim != null && Guid.TryParse(userEmailClaim.Value, out Guid userId))
+            if (userEmailClaim is not null)
             {
-                return userId;
+                return userEmailClaim.Value;
             }
             throw new InvalidOperationException("No logged-in user found.");
         }
@@ -37,7 +51,6 @@ namespace DataAccess.Implementation
         public Guid GetCurrentLoggedInUserID()
         {
             var userIdClaim = _httpContextAccessor.HttpContext.User.FindFirst("Id");
-
             if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
             {
                 return userId;
@@ -45,31 +58,16 @@ namespace DataAccess.Implementation
             throw new InvalidOperationException("No logged-in user found.");
         }
 
-        public Guid GetCurrentLoggedInUserRole()
+        public string GetCurrentLoggedInUserRole()
         {
             var userRoleClaim = _httpContextAccessor.HttpContext.User.FindFirst("Role");
-
-            if (userRoleClaim != null && Guid.TryParse(userRoleClaim.Value, out Guid userId))
+            if (userRoleClaim is not null)
             {
-                return userId;
+                return userRoleClaim.Value;
             }
             throw new InvalidOperationException("No logged-in user found.");
         }
 
-        public List<User> Search(string filter = "")
-        {
-            filter = filter.ToLower();
-            if (string.IsNullOrEmpty(filter))
-            {
-                return this.FindAllByCondition(q=>q.IsDeleted==false);
-            }
-            else
-            {
-                return this.FindAllByCondition(q => q.IsDeleted == false && (q.ArabicUserName.Contains(filter)
-                ||q.EnglishUserName.Contains(filter)
-                || q.Email.Contains(filter)));
-            }
-        }
     }
 
 }

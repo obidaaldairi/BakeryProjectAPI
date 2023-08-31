@@ -13,13 +13,12 @@ namespace DataAccess.Implementation
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Guid GetCurrentLoggedInUserEmail()
+        public string GetCurrentLoggedInUserEmail()
         {
             var userEmailClaim = _httpContextAccessor.HttpContext.User.FindFirst("Email");
-
-            if (userEmailClaim != null && Guid.TryParse(userEmailClaim.Value, out Guid userId))
+            if (userEmailClaim is not null )
             {
-                return userId;
+                return userEmailClaim.Value;
             }
             throw new InvalidOperationException("No logged-in user found.");
         }
@@ -27,21 +26,22 @@ namespace DataAccess.Implementation
         public Guid GetCurrentLoggedInUserID()
         {
             var userIdClaim = _httpContextAccessor.HttpContext.User.FindFirst("Id");
-
+            // Get admin ID
+            var admin = this.FindByCondition(x => x.UserID == Guid.Parse(userIdClaim.Value));
             if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
             {
-                return userId;
+                return admin.ID;
             }
             throw new InvalidOperationException("No logged-in user found.");
         }
 
-        public Guid GetCurrentLoggedInUserRole()
+        public string GetCurrentLoggedInUserRole()
         {
             var userRoleClaim = _httpContextAccessor.HttpContext.User.FindFirst("Role");
 
-            if (userRoleClaim != null && Guid.TryParse(userRoleClaim.Value, out Guid userId))
+            if (userRoleClaim is not null )
             {
-                return userId;
+                return userRoleClaim.Value;
             }
             throw new InvalidOperationException("No logged-in user found.");
         }
