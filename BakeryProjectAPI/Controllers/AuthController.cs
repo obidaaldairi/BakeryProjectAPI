@@ -242,5 +242,22 @@ namespace BakeryProjectAPI.Controllers
 
 
 
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("GetUserInfo")]
+        public ActionResult GetUserInfo([FromQuery]string userId)
+        {
+            try
+            {
+                var userIds = _unitOfWork.User.GetCurrentLoggedInUserID();
+                var userInfo = _unitOfWork.User.GetUserInfo(userIds.ToString());
+                return Ok(userInfo);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Domin.Entity;
+﻿using Domin.DTOS;
+using Domin.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace Domin.Repository
         public Guid GetCurrentLoggedInUserID();
         public string GetCurrentLoggedInUserEmail();
         public string GetCurrentLoggedInUserRole();
+        public UserInfoDTO GetUserInfo(string userID);
     }
 }
