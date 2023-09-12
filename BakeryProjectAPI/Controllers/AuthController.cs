@@ -259,5 +259,29 @@ namespace BakeryProjectAPI.Controllers
             }
 
         }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("EditUserProfile")]
+        public ActionResult EditUserProfile(LoginDTO DTO)
+        {
+            try
+            {
+                var user = _unitOfWork.User.FindByCondition(x => x.ID == DTO.UserID && x.IsDeleted == false && x.EmailConfirmed == true);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                user.Email = DTO.Email;
+                user.PhoneNumber = DTO.PhoneNumber;
+                _unitOfWork.User.Update(user);
+                _unitOfWork.Commit();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
     }
 }
