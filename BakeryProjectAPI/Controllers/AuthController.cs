@@ -177,16 +177,11 @@ namespace BakeryProjectAPI.Controllers
             {
                 string UserIDClaim = User.FindFirst("Id").Value;
                 var user = _unitOfWork.User.FindByCondition(x => x.ID.ToString() == UserIDClaim);
-                var userVerifiy = _unitOfWork.UserVerification
-                    .FindByCondition(x => x.UserID.ToString() == UserIDClaim
-                    && x.VerificationCode == verfiyDTO.VerificationCode
-                    && x.IsDeleted == false
-                    && x.IsVerify == false
-                    && x.ExpireDate >= DateTime.Now
-                    && x.CreationDate <= DateTime.Now);
+                var userVerifiy = _unitOfWork.UserVerification.VerfiyUserVerficationCode(UserIDClaim, verfiyDTO.VerificationCode);
                 if (userVerifiy is null)
                 {
-                    return BadRequest("Your verification code is not matching.");
+                    return BadRequest(new { status = "error", message = "Your verification code is not matching." });
+
                 }
                 //Update  user
                 user.EmailConfirmed = true;
@@ -197,7 +192,7 @@ namespace BakeryProjectAPI.Controllers
                 userVerifiy.IsDeleted = true;
                 _unitOfWork.UserVerification.Update(userVerifiy);
                 _unitOfWork.Commit();
-                return Ok("Email Confirmed successfully");
+                return Ok(new { status = "success", message = "Email Confirmed successfully" });
             }
             catch (Exception ex)
             {
@@ -207,7 +202,7 @@ namespace BakeryProjectAPI.Controllers
 
 
 
-        [HttpPost("SendVerificationEmailCode")]
+        [HttpGet("SendVerificationEmailCode")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public ActionResult SendVerificationEmailCode()
         {
@@ -231,7 +226,8 @@ namespace BakeryProjectAPI.Controllers
                 _unitOfWork.Commit();
                 string body = $"Thank you for registering on our website. Here is your verification code: {VCode}. Please enter it to confirm your email.";
                 _emailSender.SendEmailAsync(UserEmailClaim, "Verification Code", body);
-                return Ok("Email Confirmed successfully");
+                return Ok(new { status = "success", message = "The verification has been sent successfully" });
+
             }
             catch (Exception ex)
             {

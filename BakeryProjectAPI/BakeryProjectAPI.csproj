@@ -43,6 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="StoredProcedures\" />
     <Folder Include="Uploads\Images\" />
   </ItemGroup>
 

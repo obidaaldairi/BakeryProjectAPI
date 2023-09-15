@@ -11,5 +11,7 @@ namespace Domin.Entity
         public string  City { get; set; }
         public string Address { get; set; }
         public string PostalCode { get; set; }
+        //public Gender Gender { get; set; }
+        //public Country Country { get; set; }
     }
 }
