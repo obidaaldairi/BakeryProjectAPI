@@ -11,7 +11,8 @@ namespace BakeryProjectAPI.Controllers
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles ="Admin")]
     public class CategoryController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -101,23 +102,23 @@ namespace BakeryProjectAPI.Controllers
         {
             try
             {
-                var categories = _unitOfWork.Category.FindByCondition(x => x.ArabicTitle == Dto.ArabicTitle && x.EnglishTitle == Dto.EnglishTitle);
+                var categories = _unitOfWork.Category.FindByCondition(x => x.EnglishTitle == Dto.EnglishTitle && x.IsDeleted==false);
                 if (categories is not null)
                 {
-                    return Ok(new { message = "Is Exist" });
+                    return BadRequest(new { message = "The category is already exist." });
                 }
-                if (string.IsNullOrEmpty(Dto.ArabicTitle) || string.IsNullOrEmpty(Dto.EnglishTitle))
+                if (string.IsNullOrEmpty(Dto.EnglishTitle))
                 {
-                    return BadRequest("Please Enter Title");
+                    return BadRequest(new { message="Please Enter Title" });
                 }
                 _unitOfWork.Category.Insert(new Category
                 {
-                    ArabicTitle = Dto.ArabicTitle,
+                    ArabicTitle = Dto.EnglishTitle,
                     EnglishTitle = Dto.EnglishTitle,
                     IsDeleted = false
                 });
                 _unitOfWork.Commit();
-                return Ok(new { message = "Added Successfully" });
+                return Ok(new { message = "The category has been added Successfully." });
 
             }
             catch (Exception ex)
@@ -202,6 +203,24 @@ namespace BakeryProjectAPI.Controllers
                     return Ok(new { message = "Deleted Successfully" });
                 }
                 return BadRequest();
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("GetCategoriesWithPaggination")]
+        public ActionResult GetCategoriesWithPaggination(int? page=1,int? pageSize=1)
+        {
+            try
+            {
+                //int pageSize = 1; 
+                int skip = (page.Value - 1) * pageSize.Value;
+                var categories = _unitOfWork.Category.FindAllByConditionWithIncludesAndPagination(skip,pageSize.Value
+                    ,x => x.IsDeleted == false);
+                return Ok(categories);
             }
             catch (Exception ex)
             {

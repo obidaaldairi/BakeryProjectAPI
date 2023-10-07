@@ -11,6 +11,7 @@ using System;
 using System.Runtime.Intrinsics.X86;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using DataAccess.Implementation;
 
 namespace BakeryProjectAPI.Controllers
 {
@@ -22,13 +23,18 @@ namespace BakeryProjectAPI.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IEmailSender _emailSender;
-        
+        private readonly ICloudinaryServices _cloudinaryServices;
 
-        public AuthController(IUnitOfWork unitOfWork, ITokenGenerator tokenGenerator , IEmailSender emailSender)
+
+        public AuthController(IUnitOfWork unitOfWork
+            , ITokenGenerator tokenGenerator
+            , IEmailSender emailSender
+            , ICloudinaryServices cloudinaryServices)
         {
             _unitOfWork = unitOfWork;
             _tokenGenerator = tokenGenerator;
             _emailSender = emailSender;
+            _cloudinaryServices = cloudinaryServices;
         }
 
 
@@ -42,7 +48,7 @@ namespace BakeryProjectAPI.Controllers
                     // Save in User Table
                     var user = new User
                     {
-                        ArabicUserName = registerDTO.ArabicUserName,
+                        ArabicUserName = registerDTO.EnglishUserName,
                         EnglishUserName = registerDTO.EnglishUserName,
                         Email = registerDTO.Email,
                         Password = BCrypt.Net.BCrypt.HashPassword(registerDTO.Password),
@@ -88,7 +94,6 @@ namespace BakeryProjectAPI.Controllers
             }
         }
 
-
         [HttpPost("Login")]
         public ActionResult Login(LoginDTO loginDTO)
         {
@@ -112,25 +117,28 @@ namespace BakeryProjectAPI.Controllers
                 var passValidate = BCrypt.Net.BCrypt.Verify(loginDTO.Password, user.Password);
                 if(!passValidate) { return BadRequest("Password not matching"); }
 
+
+                // Generate token
+                var token = _tokenGenerator.CreateToken(user); 
+
                 // udpate user logged in date 
                 user.IsActive = true;
                 user.LastLoginDate = DateTime.Now;
                 _unitOfWork.User.Update(user);
                 _unitOfWork.Commit();
 
-                // Generate token
-                var token = _tokenGenerator.CreateToken(user);
 
-                // Set the token in a cookie
-                Response.Cookies.Append("AuthToken", token, new CookieOptions
-                {
-                    HttpOnly = true,
-                    SameSite = SameSiteMode.Strict,
-                    Expires = DateTime.UtcNow.AddHours(1) // Set the expiration time for the cookie
-                });
+                //// Set the token in a cookie
+                //Response.Cookies.Append("AuthToken", token, new CookieOptions
+                //{
+                //    HttpOnly = true,
+                //    SameSite = SameSiteMode.Strict,
+                //    Expires = DateTime.UtcNow.AddHours(1) // Set the expiration time for the cookie
+                //});
 
-                // Add the token to the response headers
-                Response.Headers.Add("Authorization", "Bearer " + token);
+                //// Add the token to the response headers
+                //Response.Headers.Add("Authorization", "Bearer " + token);
+
                 return Ok( new { Token= token });
 
             }
@@ -141,7 +149,7 @@ namespace BakeryProjectAPI.Controllers
             }
         }
 
-        [HttpPost("Logout")]
+        [HttpGet("Logout")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Logout()
         {
@@ -152,11 +160,11 @@ namespace BakeryProjectAPI.Controllers
                 user.IsActive = false;
                 _unitOfWork.User.Update(user);
                 _unitOfWork.Commit();
-                // Remove the authentication token cookie
-                Response.Cookies.Delete("AuthToken");
 
-                // Remove the Authorization header
-                Response.Headers.Remove("Authorization");
+                //// Remove the authentication token cookie
+                //Response.Cookies.Delete("AuthToken");
+                //// Remove the Authorization header
+                //Response.Headers.Remove("Authorization");
 
                 return Ok("Logged out successfully");
             }
@@ -167,7 +175,6 @@ namespace BakeryProjectAPI.Controllers
             }
 
         }
-
 
         [HttpPost("VerfiyEmail")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -199,8 +206,6 @@ namespace BakeryProjectAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
 
         [HttpGet("SendVerificationEmailCode")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -236,17 +241,14 @@ namespace BakeryProjectAPI.Controllers
            
         }
 
-
-
-
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("GetUserInfo")]
-        public ActionResult GetUserInfo([FromQuery]string userId)
+        public async Task<ActionResult> GetUserInfo([FromQuery]string userId)
         {
             try
             {
                 var userIds = _unitOfWork.User.GetCurrentLoggedInUserID();
-                var userInfo = _unitOfWork.User.GetUserInfo(userIds.ToString());
+                var userInfo =await _unitOfWork.User.GetUserInfo(userIds.ToString());
                 return Ok(userInfo);
             }
             catch (Exception ex)
@@ -279,5 +281,38 @@ namespace BakeryProjectAPI.Controllers
             }
 
         }
+
+
+
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("UpdateUserImage")]
+        public ActionResult UpdateUserImage([FromForm]LoginDTO DTO)
+        {
+            try
+            {
+                var file = HttpContext.Request.Form.Files;
+                var user = _unitOfWork.User.FindByCondition(x => x.ID == DTO.UserID && x.IsDeleted == false && x.EmailConfirmed == true);
+                if (user == null )
+                {
+                    return NotFound();
+                }
+                if (file.Count() == 0)
+                {
+                    return BadRequest(new { message = "You haven't select any file.." });
+                }
+                var image = _cloudinaryServices.SaveImage(file);
+                user.Avatar = image;
+                _unitOfWork.User.Update(user);
+                _unitOfWork.Commit();
+                return Ok(new { message="You have updated your image successfully."});
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
     }
 }

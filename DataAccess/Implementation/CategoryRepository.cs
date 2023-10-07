@@ -6,7 +6,26 @@ namespace DataAccess.Implementation
 {
     public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
     {
-        public CategoryRepository(AppDbContext context) : base(context) { }
+        private readonly AppDbContext _context;
+        public CategoryRepository(AppDbContext context) : base(context) { _context = context; }
+
+        public void CategorySeeding()
+        {
+            var checkData = _context.tblCategories.Any();
+            if (!checkData) 
+            {
+            
+                List<Category> categories = new List<Category>()
+                {
+                    new Category(){ArabicTitle="Electronics",EnglishTitle="Electronics",IsDeleted=false},
+                    new Category(){ArabicTitle="Fashion",EnglishTitle="Fashion",IsDeleted=false},
+                    new Category(){ArabicTitle="Sports",EnglishTitle="Sports",IsDeleted=false},
+                    new Category(){ArabicTitle="Arts",EnglishTitle="Arts",IsDeleted=false}
+                };
+                _context.tblCategories.AddRange(categories);
+                _context.SaveChanges();
+            }
+        }
 
         public int Count()
         {

@@ -36,13 +36,13 @@ namespace DataAccess.Implementation
             return _context.Set<T>().AsNoTracking().Where(predicate).ToList();
         }
 
-        public IQueryable<T> FindAllByConditionWithIncludes(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)//بدون شرط فقط join
+        public IQueryable<T> FindAllByConditionWithIncludes(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
         {
             var query = entities.AsNoTracking().Where(predicate);
             return includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
         }
 
-        public Tuple<List<T>, int> FindAllByConditionWithIncludesAndPagination(int skip, int take, Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)// تعتبر ميثود تنظيمية بحيث اذا كان الجدول يحتوي على الآف الأسطر .... بهذه الميثود يقوم بإظهار البيانات كمثال يظهر عشر اسطر عشر اسطر او يتم تقسيم الصفحات ويتم عرض البيانات  مقسمة في تلك الصفحات
+        public Tuple<List<T>, int> FindAllByConditionWithIncludesAndPagination(int skip, int take, Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
         {
             try
             {

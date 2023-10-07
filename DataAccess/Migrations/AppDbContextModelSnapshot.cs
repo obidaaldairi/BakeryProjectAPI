@@ -38,7 +38,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("tblAdmins");
+                    b.ToTable("tblAdmins", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.Cart", b =>
@@ -65,7 +65,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("tblCarts");
+                    b.ToTable("tblCarts", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.Category", b =>
@@ -87,7 +87,7 @@ namespace DataAccess.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("tblCategories");
+                    b.ToTable("tblCategories", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.Product", b =>
@@ -124,7 +124,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("CategoryID");
 
-                    b.ToTable("tblProducts");
+                    b.ToTable("tblProducts", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.ProductImages", b =>
@@ -146,7 +146,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("ProductID");
 
-                    b.ToTable("tblProductImages");
+                    b.ToTable("tblProductImages", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.ProductProvider", b =>
@@ -170,7 +170,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("ProviderID");
 
-                    b.ToTable("tblProductProviders");
+                    b.ToTable("tblProductProviders", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.Provider", b =>
@@ -189,7 +189,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("tblProviders");
+                    b.ToTable("tblProviders", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.Role", b =>
@@ -209,7 +209,7 @@ namespace DataAccess.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("tblRoles");
+                    b.ToTable("tblRoles", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.User", b =>
@@ -265,7 +265,7 @@ namespace DataAccess.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("tblUsers");
+                    b.ToTable("tblUsers", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.UserInformation", b =>
@@ -293,7 +293,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("tblUserInformations");
+                    b.ToTable("tblUserInformations", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.UserRole", b =>
@@ -317,7 +317,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("tblUserRoles");
+                    b.ToTable("tblUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.UserVerification", b =>
@@ -348,7 +348,7 @@ namespace DataAccess.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("tblUserVerification");
+                    b.ToTable("tblUserVerification", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.WebConfiguration", b =>
@@ -371,7 +371,7 @@ namespace DataAccess.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("tblWebConfigurations");
+                    b.ToTable("tblWebConfigurations", (string)null);
                 });
 
             modelBuilder.Entity("Domin.Entity.Admin", b =>

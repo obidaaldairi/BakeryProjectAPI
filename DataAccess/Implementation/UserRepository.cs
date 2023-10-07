@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Domin.DTOS;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Implementation
 {
@@ -72,10 +73,10 @@ namespace DataAccess.Implementation
             throw new InvalidOperationException("No logged-in user found.");
         }
 
-        public UserInfoDTO GetUserInfo(string userID)
+        public async Task<UserInfoDTO> GetUserInfo(string userID)
         {
             Guid userId = Guid.Parse(userID);
-            var userInfoDTO = _context.tblUsers.Where(q => q.ID == userId)
+            var userInfoDTO =await  _context.tblUsers.Where(q => q.ID == userId)
                 .Select(q => new UserInfoDTO
                 {
                     UserID = q.ID.ToString(),
@@ -89,8 +90,60 @@ namespace DataAccess.Implementation
                     EnglishUserName = q.EnglishUserName,
                     PhoneNumber = q.PhoneNumber
 
-                }).FirstOrDefault();
+                }).FirstOrDefaultAsync();
             return userInfoDTO;
+        }
+
+        public void UserSeeding()
+        {
+            if (!_context.tblUsers.Any())
+            {
+
+                // Add to the User table
+                var users = _context.tblUsers.Add(new User
+                {
+                    EnglishUserName = "Admin",
+                    ArabicBio = "",
+                    ArabicUserName = "Admin",
+                    BirthDate = new DateTime(),
+                    CreatedAt = DateTime.Now,
+                    Email = "Admin@Admin.com",
+                    EnglishBio = "",
+                    LastLoginDate = new DateTime(),
+                    Password = BCrypt.Net.BCrypt.HashPassword("Admin1234*"),
+                    PhoneNumber = "0000000000",
+                    PhoneNumberConfirmed = false,
+                    EmailConfirmed = false,
+                    IsActive = false,
+                    IsDeleted = false,
+                    Avatar = $"https://ui-avatars.com/api/?name=Admin&length=1"
+                });
+                _context.SaveChanges();
+
+
+                var roleID = _context.tblRoles.Where(q => q.IsDeleted == false && q.EnglishRoleName.Contains("SuperAdmin"))
+                    .Select(q=>q.ID)
+                    .FirstOrDefault();
+
+
+                // Add to UserRoles table
+                var role = _context.tblUserRoles.Add(new UserRole
+                {
+                    UserId = users.Entity.ID,
+                    RoleId =  roleID ,
+                    IsDeleted=false,
+                });
+                _context.SaveChanges();
+
+
+                // Add to Admin table
+                var admin = _context.tblAdmins.Add(new Admin
+                {
+                    IsDeleted = false,
+                    UserID = users.Entity.ID,
+                });
+                _context.SaveChanges();
+            }
         }
     }
 

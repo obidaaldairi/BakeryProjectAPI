@@ -18,6 +18,8 @@ using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.OpenApi.Models;
+using CloudinaryDotNet;
+using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -55,6 +57,18 @@ builder.Services.AddApiVersioning(opt =>
                                                     new MediaTypeApiVersionReader("x-api-version"));
 });
 
+// For Cloudinary Services
+//builder.Services.AddSingleton<Cloudinary>();
+builder.Services.AddScoped<Cloudinary>((sp) =>
+{
+    Account account = new Account(
+            configuration.GetSection("CloudName").Value,
+            configuration.GetSection("CloudApiKey").Value,
+            configuration.GetSection("CloudApiSecret").Value
+        );
+    return new Cloudinary(account);
+});
+builder.Services.AddScoped<ICloudinaryServices, CloudinaryServices>();
 
 //builder.Services.AddSingleton(typeof(IWebConfigurationRepository), typeof(WebConfigurationRepository));
 builder.Services.AddDbContext<AppDbContext>(opt =>
@@ -127,3 +141,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+

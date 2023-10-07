@@ -15,6 +15,7 @@ namespace Domin.Repository
         public Guid GetCurrentLoggedInUserID();
         public string GetCurrentLoggedInUserEmail();
         public string GetCurrentLoggedInUserRole();
-        public UserInfoDTO GetUserInfo(string userID);
+        public Task<UserInfoDTO> GetUserInfo(string userID);
+        public void UserSeeding();
     }
 }

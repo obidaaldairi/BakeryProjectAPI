@@ -6,5 +6,6 @@ namespace Domin.Repository
     {
         public List<Category> Search(string filter = "");
         public int Count();
+        public void CategorySeeding();
     }
 }

@@ -14,12 +14,20 @@ namespace BakeryProjectAPI.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailSender _emailSender;
         private readonly IWebHostEnvironment _hosting;
-        public ProductController(IUnitOfWork unitOfWork, IEmailSender emailSender, IWebHostEnvironment hosting)
+        private readonly ICloudinaryServices _cloudinaryServices;
+
+        public ProductController(
+            IUnitOfWork unitOfWork, 
+            IEmailSender emailSender, 
+            IWebHostEnvironment hosting, 
+            ICloudinaryServices cloudinaryServices)
         {
             _unitOfWork = unitOfWork;
             _emailSender = emailSender;
             _hosting = hosting;
+            _cloudinaryServices = cloudinaryServices;
         }
+
         [HttpPost("AddProduct")]
         [Authorize(Roles = "Provider")]
         public ActionResult AddProduct(ProductDTO DTO)
@@ -74,6 +82,7 @@ namespace BakeryProjectAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpPost("AddProductImage")]
         [Authorize(Roles = "Provider")]
         public ActionResult AddProductImage([FromForm] ProductImageDTO model)
@@ -82,14 +91,24 @@ namespace BakeryProjectAPI.Controllers
             {
                 // for test
                 //var headerTokenAuth = Request.Headers["Authorization"];
+                var imageLink =string.Empty;
+                var file = HttpContext.Request.Form.Files;
+                if (file.Count()>0)
+                {
+                    imageLink = _cloudinaryServices.SaveImage(file);
+                }
                 if (ModelState.IsValid)
                 {
+                    if(string.IsNullOrEmpty(imageLink) || !imageLink.Contains("cloudinary.com")) 
+                    { 
+                        return BadRequest(imageLink);
+                    }
                    var productImages= _unitOfWork.ProductImage.Insert(new ProductImages
                     {
                         ProductID= model.ProductID,
+                        Image=imageLink,
                         IsDeleted= false,
                     });
-                    UploadImage(productImages);
                     _unitOfWork.Commit();
                     return Ok("You have uploaded file successfully.");
                 }
@@ -104,6 +123,9 @@ namespace BakeryProjectAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+
         private void UploadImage(ProductImages model)
         {
             // API Files Uplaod Function 
