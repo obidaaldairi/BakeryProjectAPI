@@ -1,8 +1,13 @@
-﻿using BakeryProjectAPI.DTOs;
+﻿using APIDTOs.DTOs;
+using AutoMapper;
+using BakeryProjectAPI.DTOs;
+using BakeryProjectAPI.Utility;
 using Domin.Entity;
 using Domin.Repository;
+using FluentEmail.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace BakeryProjectAPI.Controllers
 {
@@ -125,6 +130,47 @@ namespace BakeryProjectAPI.Controllers
         }
 
 
+        [HttpPost("GetProducts")]
+        [Authorize(Roles = "Provider")]
+        public ActionResult GetProducts(ProductDTO productDTO)
+        {
+            try
+            {
+                var products = new List<ProductDTO>();
+                if (productDTO.CategoryID == Guid.Empty)
+                    return BadRequest(new ApiResponse<ProductDTO>
+                    {
+                        Data = null,
+                        Error = "",
+                        IsSuccessful = false,
+                        Message = "you have to choose Category for the product .."
+                    });
+                else
+                {
+                    var product = _unitOfWork.Product.getProviderProducts(productDTO.ProviderID, productDTO.UserID);
+                    products.AddRange(product);
+                    return Ok(new ApiResponse<ProductDTO>
+                    {
+                        Data = null,
+                        ListOfData = products,
+                        Error = "",
+                        IsSuccessful = true,
+                        Message = ""
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse<ProductDTO>
+                {
+                    Data = null,
+                    ListOfData=null,
+                    Error = ex.Message,
+                    IsSuccessful = false,
+                    Message = "Something went wrong "
+                });
+            }
+        }
 
         private void UploadImage(ProductImages model)
         {

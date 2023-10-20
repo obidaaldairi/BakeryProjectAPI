@@ -111,7 +111,8 @@ namespace BakeryProjectAPI.Controllers
 
                 // chcek if the email exist 
                 var user = _unitOfWork.User.FindByCondition(x => x.Email == loginDTO.Email);
-                if(user is null) { return NotFound("The email you entered does not exist or is registered."); }
+                //if(user is null) { return NotFound("The email you entered does not exist or is registered."); }
+                if (user is null) { return NotFound("Your email is incorrect."); }
 
                 // check password match
                 var passValidate = BCrypt.Net.BCrypt.Verify(loginDTO.Password, user.Password);

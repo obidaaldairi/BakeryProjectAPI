@@ -18,5 +18,8 @@ namespace Domin.DTOS
         public string ArabicBio { get; set; }
         public string EnglishBio { get; set; }
         public DateTime BirthDate { get; set; }
+        public string  ProviderID { get; set; }
+        public string AdminID { get; set; }
+        public string  RoleName { get; set; }
     }
 }

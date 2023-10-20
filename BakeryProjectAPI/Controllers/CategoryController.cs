@@ -136,47 +136,16 @@ namespace BakeryProjectAPI.Controllers
                 if (Dto.CategoryID != Guid.Empty)
                 {
                     var categories = _unitOfWork.Category.FindByCondition(x => x.ID == Dto.CategoryID && x.IsDeleted == false);
-                    if (categories is not null)
+                    if(categories is not null)
                     {
-                        if ((!string.IsNullOrEmpty(Dto.EnglishTitle) && !string.Equals(categories.EnglishTitle, Dto.ArabicTitle)) || (!string.IsNullOrEmpty(Dto.ArabicTitle) && !string.Equals(categories.EnglishTitle, Dto.ArabicTitle)))
-                        {
-                            if (!string.Equals(Dto.EnglishTitle, categories.EnglishTitle) && !string.Equals(Dto.ArabicTitle, categories.ArabicTitle))
-                            {
-                                categories.ArabicTitle = Dto.ArabicTitle;
-                                categories.EnglishTitle = Dto.EnglishTitle;
-                                _unitOfWork.Category.Update(categories);
-                                _unitOfWork.Commit();
-                                return Ok(new { message = "Updated Successfully" });
-                            }
-                            else
-                            {
-                                if (!string.IsNullOrEmpty(Dto.EnglishTitle) && !string.Equals(Dto.EnglishTitle, categories.EnglishTitle))
-                                {
-                                    categories.EnglishTitle = Dto.EnglishTitle;
-                                    _unitOfWork.Category.Update(categories);
-                                    _unitOfWork.Commit();
-                                    return Ok(new { message = "Updated Successfully" });
-                                }
-                                if (!string.IsNullOrEmpty(Dto.ArabicTitle) && !string.Equals(Dto.ArabicTitle, categories.ArabicTitle))
-                                {
-                                    categories.ArabicTitle = Dto.ArabicTitle;
-                                    _unitOfWork.Category.Update(categories);
-                                    _unitOfWork.Commit();
-                                    return Ok(new { message = "Updated Successfully" });
-                                }
-                            }
-                        }
-                        else
-                        {
-                            return BadRequest("Please Select Item this same data");
-                        }
+                        categories.ArabicTitle = Dto.EnglishTitle;
+                        categories.EnglishTitle = Dto.EnglishTitle;
+                        _unitOfWork.Category.Update(categories);
+                        _unitOfWork.Commit();
+                        return Ok(new { message = "Updated Successfully" });
                     }
-                        return NoContent();
                 }
-                else
-                {
-                    return NotFound();
-                }
+                return NotFound();      
             }
             catch (Exception ex)
             {
@@ -184,6 +153,7 @@ namespace BakeryProjectAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpPost("DeleteCategory")]
         public ActionResult DeleteCategory(CategoryDTO Dto)
         {
@@ -228,5 +198,65 @@ namespace BakeryProjectAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+
+        //[HttpPost("UpdateCategory")]
+        //public ActionResult UpdateCategory(CategoryDTO Dto)
+        //{
+        //    try
+        //    {
+        //        if (Dto.CategoryID != Guid.Empty)
+        //        {
+        //            var categories = _unitOfWork.Category.FindByCondition(x => x.ID == Dto.CategoryID && x.IsDeleted == false);
+        //            if (categories is not null)
+        //            {
+        //                if ((!string.IsNullOrEmpty(Dto.EnglishTitle) && !string.Equals(categories.EnglishTitle, Dto.ArabicTitle)) || (!string.IsNullOrEmpty(Dto.ArabicTitle) && !string.Equals(categories.EnglishTitle, Dto.ArabicTitle)))
+        //                {
+        //                    if (!string.Equals(Dto.EnglishTitle, categories.EnglishTitle) && !string.Equals(Dto.ArabicTitle, categories.ArabicTitle))
+        //                    {
+        //                        categories.ArabicTitle = Dto.ArabicTitle;
+        //                        categories.EnglishTitle = Dto.EnglishTitle;
+        //                        _unitOfWork.Category.Update(categories);
+        //                        _unitOfWork.Commit();
+        //                        return Ok(new { message = "Updated Successfully" });
+        //                    }
+        //                    else
+        //                    {
+        //                        if (!string.IsNullOrEmpty(Dto.EnglishTitle) && !string.Equals(Dto.EnglishTitle, categories.EnglishTitle))
+        //                        {
+        //                            categories.EnglishTitle = Dto.EnglishTitle;
+        //                            _unitOfWork.Category.Update(categories);
+        //                            _unitOfWork.Commit();
+        //                            return Ok(new { message = "Updated Successfully" });
+        //                        }
+        //                        if (!string.IsNullOrEmpty(Dto.ArabicTitle) && !string.Equals(Dto.ArabicTitle, categories.ArabicTitle))
+        //                        {
+        //                            categories.ArabicTitle = Dto.ArabicTitle;
+        //                            _unitOfWork.Category.Update(categories);
+        //                            _unitOfWork.Commit();
+        //                            return Ok(new { message = "Updated Successfully" });
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    return BadRequest("Please Select Item this same data");
+        //                }
+        //            }
+        //            return NoContent();
+        //        }
+        //        else
+        //        {
+        //            return NotFound();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
+
     }
 }
